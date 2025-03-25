@@ -4,11 +4,11 @@ import RightController from './RightController'
 
 function Controller() {
   return (
-    <div className='h-[80%] flex'>
+    <div className='h-full w-full flex'>
         <div className='w-[60%]'>
            <LeftController/>
         </div>
-        <div className='w-[40%] bg-pink-400'>
+        <div className='w-[40%]'>
         <RightController/>
         </div>
         

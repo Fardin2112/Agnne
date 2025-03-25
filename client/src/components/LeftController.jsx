@@ -8,8 +8,8 @@ const LeftController = () => {
   const [machineTemp, setMachineTemp] = useState(24);
 
   return (
-    <div className="flex justify-center items-center h-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-22 gap-y-6">
+    <div className="flex justify-center items-center h-full w-full">
+      <div className="grid grid-cols-2 gap-x-22 gap-y-6">
         {/* Knob-enabled for Blue Light & Red Light */}
         <CircleControl label="Blue Light" color="blue" value={blueLight} setValue={setBlueLight} max={100} unit="%" knobEnabled={true} />
         <CircleControl label="Red Light" color="red" value={redLight} setValue={setRedLight} max={100} unit="%" knobEnabled={true} />

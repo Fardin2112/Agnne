@@ -5,10 +5,8 @@ import Controller from '../components/Controller'
 
 function Home() {
   return (
-    <div className='bg-black h-screen w-full'>
-        <Navbar/>
+    <div className='bg-black h-full w-full'>
         <Controller/>
-        <Footer/>
     </div>
   )
 }
