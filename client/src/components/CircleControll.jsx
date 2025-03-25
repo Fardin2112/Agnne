@@ -62,58 +62,64 @@ const CircleControl = ({ label, color, value, setValue, max, unit }) => {
   }, [isDragging]);
 
   // 🎨 Progress circle calculations
-  const strokeDasharray = 251.2;
-  const strokeDashoffset = strokeDasharray - (value / max) * strokeDasharray;
+  const circumference = 376.99; // Matches User/Machine Temp (2 * π * 60)
+  const strokeDashoffset = circumference - (value / max) * circumference;
 
-  // 🟢 Calculate knob (ball) position on the circle (start from -90°)
-  const angle = (value / max) * 360 - 90;
-  const knobX = 50 + 40 * Math.cos(angle * (Math.PI / 180));
-  const knobY = 50 + 40 * Math.sin(angle * (Math.PI / 180));
+  // 🟢 Calculate knob position (start from -90°)
+  const angle = ((value / max) * 360 - 90) * (Math.PI / 180); // Convert to radians
+  const radius = 60; // Circle radius, align knob with arc
+  const knobRadius = 4; // Smaller knob to prevent clipping
+  const centerX = 64; // Match LeftController
+  const centerY = 64; // Match LeftController
+  const knobX = centerX + radius * Math.cos(angle);
+  const knobY = centerY + radius * Math.sin(angle);
 
   return (
     <div className="flex flex-col items-center">
-      <h2 className="text-white text-sm mb-2">{label}</h2>
       <div
         ref={circleRef}
         className="relative w-32 h-32 cursor-pointer touch-none"
         onMouseDown={handleStart}
         onTouchStart={handleStart}
       >
-        <svg className="w-full h-full" viewBox="0 0 100 100">
+        <svg className="absolute w-full h-full" viewBox="0 0 128 128">
           {/* Background Circle */}
-          <circle cx="50" cy="50" r="40" stroke="#555" strokeWidth="5" fill="none" />
-
-          {/* Progress Arc (Start from -90°) */}
           <circle
-            cx="50"
-            cy="50"
-            r="40"
-            stroke={color}
-            strokeWidth="5"
+            cx={centerX}
+            cy={centerY}
+            r="60"
             fill="none"
-            strokeDasharray={strokeDasharray}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-            transform="rotate(-90 50 50)" // 🛠 FIXED: Start at top
+            stroke="#e5e7eb" // Gray background
+            strokeWidth="8"
           />
-
-          {/* Knob (Bigger & White) */}
+          {/* Foreground Circle (Filled Portion) */}
+          <circle
+            cx={centerX}
+            cy={centerY}
+            r="60"
+            fill="none"
+            stroke={color}
+            strokeWidth="8"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            transform={`rotate(-90 ${centerX} ${centerY})`} // Start from top
+          />
+          {/* Knob */}
           <circle
             cx={knobX}
             cy={knobY}
-            r="8"  // Bigger knob
+            r={knobRadius}
             fill="white"
             stroke={color}
-            strokeWidth="2"
+            strokeWidth="4" // Reduced stroke width to minimize footprint
             className="cursor-pointer transition-transform duration-200"
           />
         </svg>
-
-        {/* Value in Center */}
-        <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+        <p className={`text-xl font-bold z-10 text-${color}-500 absolute inset-0 flex items-center justify-center`}>
           {value}{unit}
-        </span>
+        </p>
       </div>
+      <p className={`mt-2 text-${color}-500 font-bold`}>{label}</p>
     </div>
   );
 };

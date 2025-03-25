@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaPlay, FaPause, FaFan } from "react-icons/fa6";
+import { FaMinus, FaPlus } from "react-icons/fa6";
 
 function RightController() {
   const [sessionTime, setSessionTime] = useState(15); // In minutes
@@ -40,7 +41,9 @@ function RightController() {
   return (
     <div className="text-white flex flex-col justify-center items-center w-full h-full">
       {/* Timer UI */}
+      <p className="font-semibold text-lg">Session Time</p>
       <div className="relative flex flex-col items-center">
+
         <svg width="180" height="180" viewBox="0 0 120 120">
           {/* Background Circle */}
           <circle cx="60" cy="60" r="50" fill="transparent" stroke="gray" strokeWidth="10" />
@@ -66,8 +69,8 @@ function RightController() {
 
       {/* Increase/Decrease Session Time */}
       <div className="flex gap-4 mt-3">
-        <button onClick={() => handleTimeChange(-1)} className="px-3 text-xl font-bold">-</button>
-        <button onClick={() => handleTimeChange(1)} className="px-3 text-xl font-bold">+</button>
+        <button onClick={() => handleTimeChange(-1)} className="px-3 text-xl font-bold"><FaMinus/></button>
+        <button onClick={() => handleTimeChange(1)} className="px-3 text-xl font-bold"><FaPlus/></button>
       </div>
 
       {/* Start/Stop Button */}
