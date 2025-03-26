@@ -1,2 +1,12 @@
 @import "tailwindcss";
 
+
+@font-face {
+    font-family: "Anurati";
+    src: url("./assets/fonts/Anurati-Regular.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+  }
+
+    
+  

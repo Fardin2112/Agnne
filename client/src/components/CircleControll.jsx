@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 
 const CircleControl = ({ label, color, value, setValue, max, unit }) => {
+  console.log(color);
+  
   const circleRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startAngle, setStartAngle] = useState(null);
@@ -68,9 +70,9 @@ const CircleControl = ({ label, color, value, setValue, max, unit }) => {
   // 🟢 Calculate knob position (start from -90°)
   const angle = ((value / max) * 360 - 90) * (Math.PI / 180); // Convert to radians
   const radius = 60; // Circle radius, align knob with arc
-  const knobRadius = 4; // Smaller knob to prevent clipping
-  const centerX = 64; // Match LeftController
-  const centerY = 64; // Match LeftController
+  const knobRadius = 5; // Smaller knob to prevent clipping
+  const centerX = 68; // Match LeftController
+  const centerY = 68; // Match LeftController
   const knobX = centerX + radius * Math.cos(angle);
   const knobY = centerY + radius * Math.sin(angle);
 
@@ -78,11 +80,11 @@ const CircleControl = ({ label, color, value, setValue, max, unit }) => {
     <div className="flex flex-col items-center">
       <div
         ref={circleRef}
-        className="relative w-32 h-32 cursor-pointer touch-none"
+        className="relative w-32 h-32 cursor-pointer touch-none" // problem here 
         onMouseDown={handleStart}
         onTouchStart={handleStart}
       >
-        <svg className="absolute w-full h-full" viewBox="0 0 128 128">
+        <svg className="absolute w-full h-full" viewBox="0 0 136 136">
           {/* Background Circle */}
           <circle
             cx={centerX}
@@ -111,17 +113,18 @@ const CircleControl = ({ label, color, value, setValue, max, unit }) => {
             r={knobRadius}
             fill="white"
             stroke={color}
-            strokeWidth="4" // Reduced stroke width to minimize footprint
+            strokeWidth="8" // Reduced stroke width to minimize footprint
             className="cursor-pointer transition-transform duration-200"
           />
         </svg>
-        <p className={`text-xl font-bold z-10 text-${color}-500 absolute inset-0 flex items-center justify-center`}>
+        <p className="text-xl font-bold z-10 absolute inset-0 flex items-center justify-center" style={{ color }}>
+
           {value}{unit}
         </p>
       </div>
-      <p className={`mt-2 text-${color}-500 font-bold`}>{label}</p>
+      <p className={`mt-2 font-bold`} style={{ color }}>{label}</p>
     </div>
   );
 };
 
-export default CircleControl;
+export default CircleControl; 
