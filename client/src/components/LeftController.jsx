@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import CircleControl from "./CircleControll";
+import { AppContext } from "../context/AppContext";
 
 const LeftController = () => {
+  const {isDarkMode} = useContext(AppContext);
   const [blueLight, setBlueLight] = useState(0);
   const [redLight, setRedLight] = useState(0);
   const [userTemp, setUserTemp] = useState(25);
@@ -27,7 +29,7 @@ const LeftController = () => {
 
   return (
     <div className="flex justify-center items-center h-full w-full">
-      <div className="grid grid-cols-2 gap-x-8 gap-y-6 w-full">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-2 w-full h-full">
         {/* Blue Light and Red Light remain unchanged */}
         <CircleControl label="Blue Light" color="blue" value={blueLight} setValue={setBlueLight} max={100} unit="%" knobEnabled={true} />
         <CircleControl label="Red Light" color="red" value={redLight} setValue={setRedLight} max={100} unit="%" knobEnabled={true} />
@@ -61,15 +63,18 @@ const LeftController = () => {
             <p className="text-xl font-bold text-green-500 z-10">{userTemp}°C</p>
           </div>
           <p className="mt-2 text-green-500 font-bold">User Temp</p>
-          <div className="flex gap-2 mt-2 text-white">
+
+
+          <div className={`flex gap-2 mt-2 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
             <button onClick={decreaseUserTemp} className="px-3 py-1 rounded">
               <FaMinus />
             </button>
-            <p>{maxUserTemp}</p>
+            <p className="">{maxUserTemp}</p>
             <button onClick={increaseUserTemp} className="px-3 py-1 rounded">
               <FaPlus />
             </button>
           </div>
+
         </div>
 
         {/* Machine Temp with Border Fill */}
@@ -101,7 +106,8 @@ const LeftController = () => {
             <p className="text-xl font-bold text-orange-500 z-10">{machineTemp}°C</p>
           </div>
           <p className="mt-2 text-orange-500 font-bold">Machine Temp</p>
-          <div className="flex gap-2 mt-2 text-white">
+
+          <div className={`flex gap-2 mt-2 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"} `}>
             <button onClick={decreaseMachineTemp} className="px-3 py-1 rounded">
               <FaMinus />
             </button>
@@ -110,6 +116,7 @@ const LeftController = () => {
               <FaPlus />
             </button>
           </div>
+
         </div>
       </div>
     </div>
