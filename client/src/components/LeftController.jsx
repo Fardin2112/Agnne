@@ -77,8 +77,8 @@ const LeftController = () => {
                          [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-10 
                          [&::-webkit-slider-thumb]:${isDarkMode ?"bg-white" :"bg-gray-400"} [&::-webkit-slider-thumb]:rounded-full 
                          [&::-webkit-slider-thumb]:cursor-pointer 
-                         [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 
-                         [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:rounded-full 
+                         [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-10 
+                         [&::-moz-range-thumb]:bg-pink [&::-moz-range-thumb]:rounded-full 
                          [&::-moz-range-thumb]:cursor-pointer`}
             />
           </div>
