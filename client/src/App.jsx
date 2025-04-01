@@ -33,7 +33,7 @@ function App() {
           <div className="h-[10%] flex-shrink-0">
             <Navbar />
           </div>
-          <div className="flex-grow overflow-auto min-h-0">
+          <div className="flex-grow overflow-auto min-h-0 px-2">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/settings" element={<Setting />} />
