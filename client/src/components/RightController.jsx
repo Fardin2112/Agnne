@@ -54,7 +54,7 @@ function RightController() {
   return (
     <div className="text-white flex flex-col items-center w-full h-full">
       {/* Timer UI */}
-      <p className={` ${isDarkMode ? "text-white" : "text-black"} font-semibold text-lg pt-3`}>Session Time</p>
+      <p className={` ${isDarkMode ? "text-white" : "text-black"} font-semibold text-lg`}>Session Time</p>
       <div className="relative flex flex-col items-center">
         <svg width="180" height="180" viewBox="0 0 120 120">
           {/* Background Circle */}

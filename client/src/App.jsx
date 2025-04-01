@@ -7,33 +7,33 @@ import Setting from "./pages/Setting";
 import Stats from "./pages/Stats";
 import Sanitation from "./pages/Sanitation";
 import Shutdown from "./pages/Shutdown";
-import AgneeAnimation from "./components/AgneeAnimation"; // Import animation
+import AgneeAnimation from "./components/AgneeAnimation";
 import { AppContext } from "./context/AppContext";
-
-
 
 function App() {
   const [showAnimation, setShowAnimation] = useState(true);
-  
-  // Inside the component function, before return:
   const { isDarkMode } = useContext(AppContext);
 
   useEffect(() => {
-    setTimeout(() => setShowAnimation(false), 3000); // Hide animation after 2s
+    setTimeout(() => setShowAnimation(false), 4000); // Hide animation after 4s
   }, []);
 
   return (
-    <>
+    <div
+      className={`h-screen w-screen flex flex-col ${
+        isDarkMode ? "bg-black text-white" : "bg-white text-black"
+      }`}
+    >
       {showAnimation ? (
-        <div className={`h-screen w-screen flex flex-col ${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'}`}>
+        <div className="h-full w-full flex flex-col">
           <AgneeAnimation />
         </div>
       ) : (
-        <div className={`h-screen w-screen px-2 flex flex-col ${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'}`}>
-          <div className="h-[10%]">
-          <Navbar />
+        <>
+          <div className="h-[10%] flex-shrink-0">
+            <Navbar />
           </div>
-          <div className="flex-grow overflow-auto h-[90%]">
+          <div className="flex-grow overflow-auto min-h-0">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/settings" element={<Setting />} />
@@ -42,10 +42,12 @@ function App() {
               <Route path="/shutdown" element={<Shutdown />} />
             </Routes>
           </div>
-          <Footer />
-        </div>
+          <div className="flex-shrink-0">
+            <Footer />
+          </div>
+        </>
       )}
-    </>
+    </div>
   );
 }
 
