@@ -5,7 +5,7 @@ import { AppContext } from "../context/AppContext";
 
 function RightController() {
   const {isDarkMode} = useContext(AppContext);
-  console.log("bg in home",isDarkMode);
+
   
   const [sessionTime, setSessionTime] = useState(15); // In minutes
   const [timeLeft, setTimeLeft] = useState(sessionTime * 60); // Convert to seconds
@@ -29,28 +29,54 @@ function RightController() {
 
   // Update time when sessionTime changes
   useEffect(() => {
-    if (!isRunning) setTimeLeft(sessionTime * 60);
+    // if (!isRunning) 
+      setTimeLeft(sessionTime * 60);
   }, [sessionTime]);
 
   // Change Session Time
-  const handleTimeChange = (change) => {
+  const handleIncreaseTimeChange = (change) => {
     setSessionTime((prev) => Math.max(1, prev + change)); // Prevent negative time
+    console.log(sessionTime,"increase time ")
+  };
+  // Change Session Time
+  const handleDecreaseTimeChange = (change) => {
+    setSessionTime((prev) => Math.max(1, prev + change)); // Prevent negative time
+    console.log(sessionTime,"decrease time ")
   };
 
-  // Start/Pause Button
-  const handleStartPause = () => {
-    setIsRunning((prev) => !prev);
-  };
+ // Start or Resume Session
+ const handleStartResume = () => {
+  if (!isRunning) {
+    if (timeLeft === sessionTime * 60) {
+      console.log("Session Started"); // Simulate API call for start
+    } else {
+      console.log("Session Resumed"); // Simulate API call for resume
+    }
+    setIsRunning(true);
+  }
+};
 
-  // Stop Button
-  const handleStop = () => {
+// Pause Session
+const handlePause = () => {
+  if (isRunning) {
+    console.log("Session Paused"); // Simulate API call
     setIsRunning(false);
-    setTimeLeft(sessionTime * 60); // Reset to initial session time
-    // Optionally reset other states if needed
-    // setUserFanSpeed(50);
-    // setMachineFanSpeed(50);
-  };
+  }
+};
 
+// Stop Session
+const handleStop = () => {
+  console.log("Session Stopped"); // Simulate API call
+  setIsRunning(false);
+  setTimeLeft(sessionTime * 60); // Reset to initial session time
+  // Optionally reset other states if needed
+  // setUserFanSpeed(50);
+  // setMachineFanSpeed(50);
+};
+
+  // Determine if the session is in initial state (for "Start" vs "Resume")
+  const isInitialState = timeLeft === sessionTime * 60;
+  
   return (
     <div className="text-white flex flex-col items-center w-full h-full">
       {/* Timer UI */}
@@ -81,21 +107,22 @@ function RightController() {
 
       {/* Increase/Decrease Session Time */}
       <div className="flex gap-4 mt-3">
-        <button onClick={() => handleTimeChange(-1)} className={`px-3 text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+        <button onClick={() => handleDecreaseTimeChange(-1)} className={`px-3 text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
           <FaMinus />
         </button>
-        <button onClick={() => handleTimeChange(1)} className={`px-3 text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+        <button onClick={() => handleIncreaseTimeChange(1)} className={`px-3 text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
           <FaPlus />
         </button>
       </div>
 
       {/* Start/Pause/Stop Buttons */}
-      <div className="mt-4 flex gap-3">
+     {/* Start/Resume/Pause/Stop Buttons */}
+     <div className="mt-4 flex gap-3">
         {isRunning ? (
           <>
             {/* Pause Button */}
             <button
-              onClick={handleStartPause}
+              onClick={handlePause}
               className="px-6 py-2 rounded-full flex items-center gap-2 bg-yellow-500"
             >
               <FaPause />
@@ -111,14 +138,26 @@ function RightController() {
             </button>
           </>
         ) : (
-          /* Start Button */
-          <button
-            onClick={handleStartPause}
-            className="px-6 py-2 rounded-full flex items-center gap-2 bg-green-500"
-          >
-            <FaPlay />
-            Start
-          </button>
+          <>
+            {/* Start or Resume Button */}
+            <button
+              onClick={handleStartResume}
+              className="px-6 py-2 rounded-full flex items-center gap-2 bg-green-500"
+            >
+              <FaPlay />
+              {isInitialState ? "Start" : "Resume"}
+            </button>
+            {/* Show Stop button only if not in initial state */}
+            {!isInitialState && (
+              <button
+                onClick={handleStop}
+                className="px-6 py-2 rounded-full flex items-center gap-2 bg-red-500"
+              >
+                <FaStop />
+                Stop
+              </button>
+            )}
+          </>
         )}
       </div>
 
