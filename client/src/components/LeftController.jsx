@@ -8,13 +8,26 @@ const LeftController = () => {
   
  
   // Handlers for Max User Temp
-  const increaseUserTemp = () => setMaxUserTemp((prev) => Math.min(prev + 1, 50));
-  const decreaseUserTemp = () => setMaxUserTemp((prev) => Math.max(prev - 1, 0));
+  const increaseUserTemp = () =>{
+    setMaxUserTemp((prev) => Math.min(prev + 1, 50));
+    console.log("increase max user temp : ",maxUserTemp);
+  } 
+  const decreaseUserTemp = () => {
+    setMaxUserTemp((prev) => Math.max(prev - 1, 0));
+    console.log("decrease max user temp :",maxUserTemp);
+    
+  } 
 
   // Handlers for Max Machine Temp
-  const increaseMachineTemp = () => setMaxMachineTemp((prev) => Math.min(prev + 1, 50));
-  const decreaseMachineTemp = () => setMaxMachineTemp((prev) => Math.max(prev - 1, 0));
-
+  const increaseMachineTemp = () => {
+    setMaxMachineTemp((prev) => Math.min(prev + 1, 50));
+    console.log("increase max machine temp",maxMachineTemp);
+    
+  } 
+  const decreaseMachineTemp = () => {
+    setMaxMachineTemp((prev) => Math.max(prev - 1, 0));
+    console.log("decrease max machine temp :",maxMachineTemp);
+  }
   // Calculate fill percentages
   const userTempPercentage = maxUserTemp === 0 ? 0 : (userTemp / maxUserTemp) * 100;
   const machineTempPercentage = maxMachineTemp === 0 ? 0 : (machineTemp / maxMachineTemp) * 100;
@@ -23,8 +36,16 @@ const LeftController = () => {
   const circumference = 376.99;
 
   // Handlers for Blue and Red Light
-  const handleBlueLightChange = (e) => setBlueLight(Number(e.target.value));
-  const handleRedLightChange = (e) => setRedLight(Number(e.target.value));
+  const handleBlueLightChange = (e) => {
+    setBlueLight(Number(e.target.value));
+    console.log("blue light value : ",blueLight);
+    
+  } 
+  const handleRedLightChange = (e) => {
+    setRedLight(Number(e.target.value));
+    console.log("red light value : ",redLight);
+    
+  } 
 
   return (
     <div className="flex justify-center items-center h-full w-full">

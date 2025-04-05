@@ -76,6 +76,20 @@ const handleStop = () => {
 
   // Determine if the session is in initial state (for "Start" vs "Resume")
   const isInitialState = timeLeft === sessionTime * 60;
+
+
+  // User fan logic
+  const handleUserfan = (e) => {
+    setUserFanSpeed(e.target.value);
+    console.log("User fan speed : ",userFanSpeed);
+    
+  }
+
+  const handleMachinefan = (e) => {
+    setMachineFanSpeed(e.target.value);
+    console.log("handle machine speed :",machineFanSpeed);
+    
+  }
   
   return (
     <div className="text-white flex flex-col items-center w-full h-full">
@@ -173,7 +187,7 @@ const handleStop = () => {
               min="0"
               max="100"
               value={userFanSpeed}
-              onChange={(e) => setUserFanSpeed(e.target.value)}
+              onChange={(e) => handleUserfan(e)}
               style={{
                 background: `linear-gradient(to right, blue ${userFanSpeed}%, #ddd ${userFanSpeed}%)`,
               }}
@@ -200,7 +214,7 @@ const handleStop = () => {
               min="0"
               max="100"
               value={machineFanSpeed}
-              onChange={(e) => setMachineFanSpeed(e.target.value)}
+              onChange={(e) => handleMachinefan(e)}
               style={{
                 background: `linear-gradient(to right, yellow ${machineFanSpeed}%, #ddd ${machineFanSpeed}%)`,
               }}

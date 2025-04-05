@@ -113,12 +113,17 @@ function Sanitation() {
         {/* Buttons */}
         <div className="mt-4 flex gap-3">
           {sanitationMode && !isPaused ? (
+            <div>
             <button
               onClick={handlePause}
               className="px-5 py-2 text-white text-lg font-semibold rounded-xl shadow-lg bg-yellow-500 hover:bg-yellow-600 active:scale-95 transition-all"
             >
               Pause
             </button>
+            <button className="px-5 py-2 text-white text-lg font-semibold rounded-xl shadow-lg bg-yellow-500 hover:bg-yellow-600 active:scale-95 transition-all">
+              Stop
+            </button>
+            </div>
           ) : (
             <button
               onClick={isInitialState ? handleStart : handleResume}
