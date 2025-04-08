@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { AppContext } from "../context/AppContext";
 import { HiOutlineLightBulb } from "react-icons/hi";
@@ -20,104 +20,102 @@ const LeftController = () => {
     setMaxMachineTemp,
   } = useContext(AppContext);
 
-  const [ws, setWs] = useState(null); // State to hold WebSocket instance
+  const socketRef = useRef(null);
+  const reconnectIntervalRef = useRef(null);
 
-  // WebSocket connection setup
+  // Auto-Reconnect WebSocket Setup
   useEffect(() => {
-    const websocket = new WebSocket("ws://localhost:3000");
+    let isMounted = true;
 
-    websocket.onopen = () => {
-      console.log("Connected to WebSocket server");
+    const connectWebSocket = () => {
+      const ws = new WebSocket("ws://localhost:3000");
+      socketRef.current = ws;
+
+      ws.onopen = () => {
+        console.log("✅ Connected to WebSocket server");
+        clearInterval(reconnectIntervalRef.current);
+      };
+
+      ws.onmessage = (event) => {
+        const [key, value] = event.data.split("=");
+        switch (key) {
+          case "TEMP_USER":
+            setUserTemp(parseFloat(value));
+            break;
+          case "TEMP_MACHINE":
+            setMachineTemp(parseFloat(value));
+            break;
+          case "BLUE_INTENSITY":
+            setBlueLight(parseFloat(value));
+            break;
+          case "RED_INTENSITY":
+            setRedLight(parseFloat(value));
+            break;
+          default:
+            break;
+        }
+      };
+
+      ws.onclose = () => {
+        console.warn("⚠️ WebSocket disconnected. Attempting to reconnect...");
+        reconnectIntervalRef.current = setInterval(() => {
+          if (!socketRef.current || socketRef.current.readyState === WebSocket.CLOSED) {
+            connectWebSocket();
+          }
+        }, 2000);
+      };
+
+      ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        ws.close();
+      };
     };
 
-    websocket.onmessage = (event) => {
-      const [key, value] = event.data.split("=");
-      switch (key) {
-        case "TEMP_USER":
-          setUserTemp(parseFloat(value));
-          break;
-        case "TEMP_MACHINE":
-          setMachineTemp(parseFloat(value));
-          break;
-        case "BLUE_INTENSITY":
-          setBlueLight(parseFloat(value));
-          break;
-        case "RED_INTENSITY":
-          setRedLight(parseFloat(value));
-          break;
-        default:
-          break;
-      }
-    };
+    connectWebSocket();
 
-    websocket.onclose = () => {
-      console.log("Disconnected from WebSocket server");
-    };
-
-    websocket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    setWs(websocket);
-
-    // Cleanup on component unmount
     return () => {
-      websocket.close();
+      isMounted = false;
+      clearInterval(reconnectIntervalRef.current);
+      socketRef.current?.close();
     };
   }, [setUserTemp, setMachineTemp, setBlueLight, setRedLight]);
 
-  // Handlers for Max User Temp
-  const increaseUserTemp = () => {
-    setMaxUserTemp((prev) => Math.min(prev + 1, 50));
-    console.log("increase max user temp: ", maxUserTemp);
+  // Send message via WebSocket
+  const sendWsMessage = (msg) => {
+    const ws = socketRef.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(msg);
+    }
   };
 
-  const decreaseUserTemp = () => {
-    setMaxUserTemp((prev) => Math.max(prev - 1, 0));
-    console.log("decrease max user temp:", maxUserTemp);
-  };
-
-  // Handlers for Max Machine Temp
-  const increaseMachineTemp = () => {
-    setMaxMachineTemp((prev) => Math.min(prev + 1, 50));
-    console.log("increase max machine temp", maxMachineTemp);
-  };
-
-  const decreaseMachineTemp = () => {
-    setMaxMachineTemp((prev) => Math.max(prev - 1, 0));
-    console.log("decrease max machine temp:", maxMachineTemp);
-  };
-
-  // Calculate fill percentages
-  const userTempPercentage = maxUserTemp === 0 ? 0 : (userTemp / maxUserTemp) * 100;
-  const machineTempPercentage = maxMachineTemp === 0 ? 0 : (machineTemp / maxMachineTemp) * 100;
-
-  // Circle circumference for stroke-dasharray
-  const circumference = 376.99;
-
-  // Handlers for Blue and Red Light with WebSocket updates
+  // Blue light slider
   const handleBlueLightChange = (e) => {
     const newValue = Number(e.target.value);
     setBlueLight(newValue);
-    console.log("blue light value: ", newValue);
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(`BLUE_INTENSITY=${newValue}`);
-    }
+    sendWsMessage(`BLUE_INTENSITY=${newValue}`);
   };
 
+  // Red light slider
   const handleRedLightChange = (e) => {
     const newValue = Number(e.target.value);
     setRedLight(newValue);
-    console.log("red light value: ", newValue);
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(`RED_INTENSITY=${newValue}`);
-    }
+    sendWsMessage(`RED_INTENSITY=${newValue}`);
   };
+
+  // Max temp handlers
+  const increaseUserTemp = () => setMaxUserTemp((prev) => Math.min(prev + 1, 50));
+  const decreaseUserTemp = () => setMaxUserTemp((prev) => Math.max(prev - 1, 0));
+  const increaseMachineTemp = () => setMaxMachineTemp((prev) => Math.min(prev + 1, 50));
+  const decreaseMachineTemp = () => setMaxMachineTemp((prev) => Math.max(prev - 1, 0));
+
+  const userTempPercentage = maxUserTemp === 0 ? 0 : (userTemp / maxUserTemp) * 100;
+  const machineTempPercentage = maxMachineTemp === 0 ? 0 : (machineTemp / maxMachineTemp) * 100;
+  const circumference = 376.99;
 
   return (
     <div className="flex justify-center items-center h-full w-full">
       <div className="grid grid-cols-2 gap-x-4 gap-y-2 w-full h-full">
-        {/* Blue Light */}
+        {/* Blue Light Slider */}
         <div className="flex flex-col items-center pt-1">
           <div className="flex flex-col h-full items-center">
             <input
@@ -129,15 +127,9 @@ const LeftController = () => {
               style={{
                 background: `linear-gradient(to right, #3b82f6 ${blueLight}%, #e5e7eb ${blueLight}%)`,
               }}
-              className={`w-[200px] mt-24 h-4 appearance-none bg-gray-300 rounded-full outline-none transform -rotate-90 origin-center cursor-pointer
-              [&::-webkit-slider-runnable-track]:rounded-lg
-                         [&::-webkit-slider-thumb]:appearance-none 
-                         [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-10 
-                         [&::-webkit-slider-thumb]:bg-blue-300 [&::-webkit-slider-thumb]:rounded-full 
-                         [&::-webkit-slider-thumb]:cursor-pointer 
-                         [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 
-                         [&::-moz-range-thumb]:bg-blue-300 [&::-moz-range-thumb]:rounded-full 
-                         [&::-moz-range-thumb]:cursor-pointer`}
+              className="w-[200px] mt-24 h-4 appearance-none bg-gray-300 rounded-full outline-none transform -rotate-90 origin-center cursor-pointer
+                [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-10 [&::-webkit-slider-thumb]:bg-blue-300 [&::-webkit-slider-thumb]:rounded-full
+                [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer"
             />
           </div>
           <div className="flex gap-2 items-center pt-1 text-xl font-bold text-blue-500">
@@ -146,7 +138,7 @@ const LeftController = () => {
           </div>
         </div>
 
-        {/* Red Light */}
+        {/* Red Light Slider */}
         <div className="flex flex-col h-full pt-1 items-center">
           <div className="flex flex-col h-full items-center">
             <input
@@ -158,15 +150,9 @@ const LeftController = () => {
               style={{
                 background: `linear-gradient(to right, #ef4444 ${redLight}%, #e5e7eb ${redLight}%)`,
               }}
-              className={`w-[200px] mt-24 h-4 appearance-none bg-gray-300 rounded-full outline-none transform -rotate-90 origin-center cursor-pointer
-              [&::-webkit-slider-runnable-track]:rounded-lg 
-                         [&::-webkit-slider-thumb]:appearance-none 
-                         [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-10 
-                         [&::-webkit-slider-thumb]:bg-red-300 [&::-webkit-slider-thumb]:rounded-full 
-                         [&::-webkit-slider-thumb]:cursor-pointer 
-                         [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-10 
-                         [&::-moz-range-thumb]:bg-red-300 [&::-moz-range-thumb]:rounded-full 
-                         [&::-moz-range-thumb]:cursor-pointer`}
+              className="w-[200px] mt-24 h-4 appearance-none bg-gray-300 rounded-full outline-none transform -rotate-90 origin-center cursor-pointer
+                [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-10 [&::-webkit-slider-thumb]:bg-red-300 [&::-webkit-slider-thumb]:rounded-full
+                [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer"
             />
           </div>
           <div className="flex gap-2 items-center pt-1 text-xl font-bold text-red-500">
@@ -175,18 +161,11 @@ const LeftController = () => {
           </div>
         </div>
 
-        {/* User Temp */}
+        {/* User Temperature Control */}
         <div className="flex flex-col items-center">
           <div className="w-32 h-32 relative flex items-center justify-center">
             <svg className="absolute w-full h-full" viewBox="0 0 128 128">
-              <circle
-                cx="64"
-                cy="64"
-                r="60"
-                fill="none"
-                stroke="#e5e7eb"
-                strokeWidth="8"
-              />
+              <circle cx="64" cy="64" r="60" fill="none" stroke="#e5e7eb" strokeWidth="8" />
               <circle
                 cx="64"
                 cy="64"
@@ -213,18 +192,11 @@ const LeftController = () => {
           </div>
         </div>
 
-        {/* Machine Temp */}
+        {/* Machine Temperature Control */}
         <div className="flex flex-col items-center">
           <div className="w-32 h-32 relative flex items-center justify-center">
             <svg className="absolute w-full h-full" viewBox="0 0 128 128">
-              <circle
-                cx="64"
-                cy="64"
-                r="60"
-                fill="none"
-                stroke="#e5e7eb"
-                strokeWidth="8"
-              />
+              <circle cx="64" cy="64" r="60" fill="none" stroke="#e5e7eb" strokeWidth="8" />
               <circle
                 cx="64"
                 cy="64"
