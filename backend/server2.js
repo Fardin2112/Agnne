@@ -1,30 +1,45 @@
-// server2.js
+import express from 'express';
+import cors from 'cors';
+import { WebSocketServer, WebSocket } from 'ws'; // ✅ Correct import
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import userRouter from './routes/userRoute.js';
 
-const express = require('express');
-const WebSocket = require('ws');
-const path = require('path');
+// Resolve __dirname for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-// Create Express App
+// Initialize Express
 const app = express();
 const port = 3000;
 
-// Serve static files from "public" folder
-app.use(express.static(path.join(__dirname, 'public')));
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-// Create HTTP server
+// Root endpoint
+app.get('/', (req, res) => {
+  res.send('API Working');
+});
+
+// API endpoint
+app.use('/api/user', userRouter);
+
+// Start HTTP server
 const server = app.listen(port, () => {
   console.log(`Mock server running at http://localhost:${port}`);
 });
 
-// WebSocket Server
-const wss = new WebSocket.Server({ server });
+// ✅ Initialize WebSocket server
+const wss = new WebSocketServer({ server });
 
+// Mock state object
 let currentState = {
   HEARTBEAT: 1,
   TEMP_USER: 22.5,
   TEMP_MACHINE: 23.2,
   BLUE_INTENSITY: 60,
-  RED_INTENSITY: 80,
+  RED_INTENSITY: 70,
   FAN_USER: 1,
   FAN_MACHINE: 1,
   SESSION_TIME: 15,
@@ -36,43 +51,40 @@ let currentState = {
   HARDWARE_STATUS: "Not Detected"
 };
 
-// Broadcast dummy data every 1 second
+// Periodic TEMP_USER and TEMP_MACHINE update every 4s
 setInterval(() => {
-  // Update some fields randomly
-  currentState.TEMP_USER = (20 + Math.random() * 5).toFixed(2);
-  currentState.TEMP_MACHINE = (21 + Math.random() * 4).toFixed(2);
-  currentState.POWER_USAGE = (25 + Math.random() * 5).toFixed(2);
-  currentState.HEARTBEAT = 1;
+  currentState.TEMP_USER = Number((20 + Math.random() * 5).toFixed(2));
+  currentState.TEMP_MACHINE = Number((21 + Math.random() * 4).toFixed(2));
 
-  // Broadcast to all connected clients
-  for (const [key, value] of Object.entries(currentState)) {
-    const message = `${key}=${value}`;
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
-      }
-    });
-  }
+  const tempUserMsg = `TEMP_USER=${currentState.TEMP_USER}`;
+  const tempMachineMsg = `TEMP_MACHINE=${currentState.TEMP_MACHINE}`;
+  
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(tempUserMsg);
+      client.send(tempMachineMsg);
+    }
+  });
 }, 1000);
 
-// Handle frontend connections and messages
+// WebSocket connection handling
 wss.on('connection', (ws) => {
   console.log('Frontend connected (mock mode)');
 
-  // Send initial state on connection
+  // Send initial state
   for (const [key, value] of Object.entries(currentState)) {
     ws.send(`${key}=${value}`);
   }
 
-  // Handle messages from frontend
   ws.on('message', (msg) => {
     console.log(`Frontend sent: ${msg}`);
+    const message = msg.toString();
 
-    const [key, value] = msg.toString().split('=');
-    if (key && value !== undefined) {
+    if (!message.includes('=')) return;
+
+    const [key, value] = message.split('=');
+    if (key && value !== undefined && Object.prototype.hasOwnProperty.call(currentState, key)) {
       currentState[key] = isNaN(value) ? value : parseFloat(value);
-
-      // Echo the updated value back to all clients
       wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(`${key}=${value}`);
@@ -84,4 +96,13 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     console.log('Frontend disconnected');
   });
+
+  ws.on('error', (error) => {
+    console.log('WebSocket error:', error);
+  });
+});
+
+// Handle server errors
+server.on('error', (error) => {
+  console.error('Server error:', error);
 });
