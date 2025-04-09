@@ -166,4 +166,5 @@ wss.on('connection', (ws) => {
 });
 
 server.on('error', (error) => {
-  console.error('❗
+  console.error('❗ Server error:', error);
+});
