@@ -7,18 +7,15 @@ import { dirname } from 'path';
 import deviceRouter from './routes/deviceRoute.js';
 import * as deviceController from './controller/deviceController.js';
 
-// Get __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// App setup
 const app = express();
 const port = 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// Endpoint check
 app.get('/', (req, res) => {
   res.send('API Working');
 });
@@ -31,21 +28,17 @@ const espState = {
   connected: false,
 };
 
-// Pass shared state to controller
 deviceController.setESPConnection(espState);
 
-// API Routes
 app.use('/api/device', deviceRouter);
 
-// Start server
 const server = app.listen(port, () => {
   console.log(`🟢 Mock server running at http://localhost:${port}`);
 });
 
-// WebSocket setup
 const wss = new WebSocketServer({ server });
 
-// Mock initial data
+// Mock state
 let currentState = {
   HEARTBEAT: 1,
   TEMP_USER: 22.5,
@@ -63,9 +56,9 @@ let currentState = {
   HARDWARE_STATUS: "Not Detected"
 };
 
-// ==========================
-// Serial Port Setup for ESP32
-// ==========================
+// =======================
+// ESP32 Serial Setup
+// =======================
 try {
   espState.serial = new SerialPort({ path: '/dev/ttyUSB0', baudRate: 9600 });
 
@@ -75,16 +68,21 @@ try {
     currentState.HARDWARE_STATUS = "Detected";
   });
 
+  // ✅ Buffer to collect full lines from ESP32
+  let serialBuffer = '';
+
   espState.serial.on('data', (data) => {
-    const raw = data.toString().trim();
-    if (!raw) return;
+    serialBuffer += data.toString();
 
-    // ✅ Log everything coming from ESP32
-    console.log("📬 From ESP32:", raw);
+    const lines = serialBuffer.split('\n');
+    serialBuffer = lines.pop(); // Keep incomplete line
 
-    const lines = raw.split('\n');
     lines.forEach((line) => {
       const trimmed = line.trim();
+      if (!trimmed) return;
+
+      console.log("📬 From ESP32:", trimmed);
+
       if (!trimmed.includes('=')) return;
 
       const [key, value] = trimmed.split('=');
@@ -115,9 +113,9 @@ try {
   console.warn('⚠️ ESP32 not connected or port not found');
 }
 
-// ================================
-// Mock TEMP updates if no ESP32
-// ================================
+// =======================
+// Mock TEMP updates
+// =======================
 setInterval(() => {
   if (!espState.connected) {
     currentState.TEMP_USER = Number((20 + Math.random() * 5).toFixed(2));
@@ -132,13 +130,13 @@ setInterval(() => {
   }
 }, 1000);
 
-// =====================
+// =======================
 // WebSocket Handling
-// =====================
+// =======================
 wss.on('connection', (ws) => {
   console.log('🖥️ Frontend connected');
 
-  // Send full state on connect
+  // Send initial state
   for (const [key, value] of Object.entries(currentState)) {
     ws.send(`${key}=${value}`);
   }
@@ -148,6 +146,7 @@ wss.on('connection', (ws) => {
     console.log(`📩 Frontend → Server: ${message}`);
 
     if (espState.connected && espState.serial?.writable) {
+      console.log(`📤 Sending to ESP32: ${message}`);
       espState.serial.write(message + '\n');
     } else {
       const [key, value] = message.split('=');
@@ -166,7 +165,5 @@ wss.on('connection', (ws) => {
   ws.on('error', (err) => console.error('WebSocket error:', err));
 });
 
-// Error handler
 server.on('error', (error) => {
-  console.error('❗ Server error:', error);
-});
+  console.error('❗
