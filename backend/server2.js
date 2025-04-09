@@ -5,6 +5,7 @@ import { SerialPort } from 'serialport';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import deviceRouter from './routes/deviceRoute.js';
+import * as deviceController from './controller/deviceController.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -19,15 +20,26 @@ app.get('/', (req, res) => {
   res.send('API Working');
 });
 
+// ===== Shared ESP32 State =====
+const espState = {
+  serial: null,
+  connected: false,
+};
+
+// ===== Pass state to controller =====
+deviceController.setESPConnection(espState);
+
+// ===== Setup Express Routes =====
 app.use('/api/device', deviceRouter);
 
 const server = app.listen(port, () => {
   console.log(`🟢 Mock server running at http://localhost:${port}`);
 });
 
+// ===== WebSocket Setup =====
 const wss = new WebSocketServer({ server });
 
-// In-memory mock state
+// ===== In-memory Mock State =====
 let currentState = {
   HEARTBEAT: 1,
   TEMP_USER: 22.5,
@@ -45,20 +57,17 @@ let currentState = {
   HARDWARE_STATUS: "Not Detected"
 };
 
-// ===== SerialPort Setup (ESP32 UART) =====
-let esp32Connected = false;
-let espSerial;
-
+// ===== Connect to ESP32 via Serial =====
 try {
-  espSerial = new SerialPort({ path: '/dev/ttyUSB0', baudRate: 9600 }); // Adjust port if needed
+  espState.serial = new SerialPort({ path: '/dev/ttyUSB0', baudRate: 9600 });
 
-  espSerial.on('open', () => {
+  espState.serial.on('open', () => {
     console.log('🔌 Connected to ESP32');
-    esp32Connected = true;
+    espState.connected = true;
     currentState.HARDWARE_STATUS = "Detected";
   });
 
-  espSerial.on('data', (data) => {
+  espState.serial.on('data', (data) => {
     const lines = data.toString().split('\n');
     lines.forEach((line) => {
       const trimmed = line.trim();
@@ -76,15 +85,15 @@ try {
     });
   });
 
-  espSerial.on('close', () => {
+  espState.serial.on('close', () => {
     console.warn('❌ ESP32 connection closed');
-    esp32Connected = false;
+    espState.connected = false;
     currentState.HARDWARE_STATUS = "Not Detected";
   });
 
-  espSerial.on('error', (err) => {
+  espState.serial.on('error', (err) => {
     console.error('ESP32 serial error:', err.message);
-    esp32Connected = false;
+    espState.connected = false;
     currentState.HARDWARE_STATUS = "Not Detected";
   });
 
@@ -92,19 +101,16 @@ try {
   console.warn('⚠️ ESP32 not connected or port not found');
 }
 
-// ===== Mock TEMP_USER + TEMP_MACHINE update if ESP32 not connected =====
+// ===== WebSocket Mock Update (if ESP not connected) =====
 setInterval(() => {
-  if (!esp32Connected) {
+  if (!espState.connected) {
     currentState.TEMP_USER = Number((20 + Math.random() * 5).toFixed(2));
     currentState.TEMP_MACHINE = Number((21 + Math.random() * 4).toFixed(2));
 
-    const tempUserMsg = `TEMP_USER=${currentState.TEMP_USER}`;
-    const tempMachineMsg = `TEMP_MACHINE=${currentState.TEMP_MACHINE}`;
-
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(tempUserMsg);
-        client.send(tempMachineMsg);
+        client.send(`TEMP_USER=${currentState.TEMP_USER}`);
+        client.send(`TEMP_MACHINE=${currentState.TEMP_MACHINE}`);
       }
     });
   }
@@ -114,6 +120,7 @@ setInterval(() => {
 wss.on('connection', (ws) => {
   console.log('🖥️ Frontend connected');
 
+  // Send current state
   for (const [key, value] of Object.entries(currentState)) {
     ws.send(`${key}=${value}`);
   }
@@ -122,11 +129,9 @@ wss.on('connection', (ws) => {
     const message = msg.toString();
     console.log(`📩 Frontend → Server: ${message}`);
 
-    // Forward to ESP32 if connected
-    if (esp32Connected && espSerial?.writable) {
-      espSerial.write(message + '\n');
+    if (espState.connected && espState.serial?.writable) {
+      espState.serial.write(message + '\n');
     } else {
-      // Fallback: Update mock state
       const [key, value] = message.split('=');
       if (key && value !== undefined && Object.prototype.hasOwnProperty.call(currentState, key)) {
         currentState[key] = isNaN(value) ? value : parseFloat(value);
@@ -143,7 +148,7 @@ wss.on('connection', (ws) => {
   ws.on('error', (err) => console.error('WebSocket error:', err));
 });
 
-// Error handler
+// ===== Server Error Handler =====
 server.on('error', (error) => {
   console.error('❗ Server error:', error);
 });

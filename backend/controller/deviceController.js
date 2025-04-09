@@ -1,16 +1,14 @@
-let espSerial;          // Will be passed from server
-let esp32Connected;     // Flag also passed from server
+let espState = null;
 
 const sendToESP = (cmd) => {
   console.log("🛰️ Command:", cmd);
-  if (esp32Connected && espSerial?.writable) {
-    espSerial.write(cmd + '\n');
+  if (espState?.connected && espState?.serial?.writable) {
+    espState.serial.write(cmd + '\n');
   } else {
     console.warn("⚠️ ESP32 not connected. (Mock mode)");
   }
 };
 
-// Controller functions
 export const setSessionTime = (req, res) => {
   const { time } = req.body;
   if (!time) return res.status(400).send("Missing session time");
@@ -21,6 +19,11 @@ export const setSessionTime = (req, res) => {
 export const startSession = (req, res) => {
   sendToESP("SESSION_TIME=900");
   res.send("Session started");
+};
+
+export const stopSession = (req, res) => {
+  sendToESP("SESSION_STOP");
+  res.send("Session stopped");
 };
 
 export const startSanitation = (req, res) => {
@@ -52,8 +55,7 @@ export const resetStats = (req, res) => {
   res.send("Stats reset");
 };
 
-// 👇 Method to set shared serial instance from server2.js
-export const setESPConnection = (serial, connectedFlag) => {
-  espSerial = serial;
-  esp32Connected = connectedFlag;
+// Shared connection setter
+export const setESPConnection = (sharedState) => {
+  espState = sharedState;
 };

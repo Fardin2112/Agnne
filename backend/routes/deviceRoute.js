@@ -7,12 +7,14 @@ import {
   setMachineFan,
   exportLightHistory,
   resetStats,
+  stopSession,
 } from '../controller/deviceController.js';
 
 const deviceRouter = express.Router();
 
 deviceRouter.post('/session', setSessionTime);         // Set session time
 deviceRouter.post('/session/start', startSession);     // Start session
+deviceRouter.post('/session/stop', stopSession); // Stop session
 deviceRouter.post('/sanitation/start', startSanitation); // Start sanitation
 deviceRouter.post('/fan/user', setUserFan);            // Set user fan
 deviceRouter.post('/fan/machine', setMachineFan);      // Set machine fan

@@ -12,16 +12,22 @@ function RightController() {
   const [userFanSpeed, setUserFanSpeed] = useState(50);
   const [machineFanSpeed, setMachineFanSpeed] = useState(50);
 
-  // Timer logic
+  const isInitialState = timeLeft === sessionTime * 60;
+
+  // ========== Timer Effect ==========
   useEffect(() => {
     let timer;
+
     if (isRunning && timeLeft > 0) {
       timer = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
-    } else if (timeLeft === 0) {
+    } else if (isRunning && timeLeft === 0) {
+      console.log("⏱️ Session time finished");
+      stopSession(); // ✅ stop ESP32 session
       setIsRunning(false);
     }
+
     return () => clearInterval(timer);
   }, [isRunning, timeLeft]);
 
@@ -29,16 +35,14 @@ function RightController() {
     setTimeLeft(sessionTime * 60);
   }, [sessionTime]);
 
-  const isInitialState = timeLeft === sessionTime * 60;
-
-  // ================= API Calls =================
+  // ========== API Calls ==========
 
   const sendSessionTime = async () => {
     try {
       await axios.post("http://localhost:3000/api/device/session", {
         time: sessionTime,
       });
-      console.log("✅ Session time set");
+      console.log("✅ Session time set", sessionTime);
     } catch (error) {
       console.error("❌ Failed to set session time", error);
     }
@@ -46,7 +50,7 @@ function RightController() {
 
   const startSession = async () => {
     try {
-      await sendSessionTime(); // Set time first
+      await sendSessionTime();
       await axios.post("http://localhost:3000/api/device/session/start");
       console.log("✅ Session started");
     } catch (error) {
@@ -65,16 +69,14 @@ function RightController() {
 
   const sendFanSpeed = async (type, value) => {
     try {
-      await axios.post(`http://localhost:3000/api/device/fan/${type}`, {
-        value,
-      });
+      await axios.post(`http://localhost:3000/api/device/fan/${type}`, { value });
       console.log(`✅ Fan ${type} updated: ${value}`);
     } catch (error) {
       console.error(`❌ Fan ${type} update failed`, error);
     }
   };
 
-  // ================= Handlers =================
+  // ========== Event Handlers ==========
 
   const handleStartResume = () => {
     if (!isRunning) {
@@ -87,7 +89,7 @@ function RightController() {
 
   const handlePause = () => {
     setIsRunning(false);
-    console.log("⏸️ Paused (no API needed)");
+    console.log("⏸️ Paused (frontend only)");
   };
 
   const handleStop = () => {
@@ -111,11 +113,13 @@ function RightController() {
     sendFanSpeed("machine", value);
   };
 
-  // ================= UI =================
+  // ========== UI ==========
 
   return (
     <div className="text-white flex flex-col items-center w-full h-full">
-      <p className={` ${isDarkMode ? "text-white" : "text-black"} font-semibold text-lg`}>Session Time</p>
+      <p className={`${isDarkMode ? "text-white" : "text-black"} font-semibold text-lg`}>
+        Session Time
+      </p>
 
       {/* Timer Circle */}
       <div className="relative flex flex-col items-center">
@@ -134,7 +138,7 @@ function RightController() {
             transform="rotate(-90 60 60)"
           />
         </svg>
-        <span className={` ${isDarkMode ? "text-white" : "text-black"} absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold`}>
+        <span className={`${isDarkMode ? "text-white" : "text-black"} absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold`}>
           {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
         </span>
       </div>
