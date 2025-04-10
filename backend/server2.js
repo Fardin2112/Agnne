@@ -29,7 +29,6 @@ const espState = {
 };
 
 deviceController.setESPConnection(espState);
-
 app.use('/api/device', deviceRouter);
 
 const server = app.listen(port, () => {
@@ -38,7 +37,9 @@ const server = app.listen(port, () => {
 
 const wss = new WebSocketServer({ server });
 
-// Mock state
+// =======================
+// Mock state if ESP32 is not connected
+// =======================
 let currentState = {
   HEARTBEAT: 1,
   TEMP_USER: 22.5,
@@ -68,14 +69,12 @@ try {
     currentState.HARDWARE_STATUS = "Detected";
   });
 
-  // ✅ Buffer to collect full lines from ESP32
   let serialBuffer = '';
 
   espState.serial.on('data', (data) => {
     serialBuffer += data.toString();
-
     const lines = serialBuffer.split('\n');
-    serialBuffer = lines.pop(); // Keep incomplete line
+    serialBuffer = lines.pop();
 
     lines.forEach((line) => {
       const trimmed = line.trim();
@@ -114,7 +113,19 @@ try {
 }
 
 // =======================
-// Mock TEMP updates
+// Log ESP32 state every 10 seconds
+// =======================
+setInterval(() => {
+  if (espState.connected) {
+    console.log('\n🕒 [ESP32 STATE UPDATE -', new Date().toLocaleTimeString(), ']');
+    for (const [key, value] of Object.entries(currentState)) {
+      console.log(`${key} = ${value}`);
+    }
+  }
+}, 10000);
+
+// =======================
+// Mock TEMP updates if not connected
 // =======================
 setInterval(() => {
   if (!espState.connected) {
