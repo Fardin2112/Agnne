@@ -38,6 +38,7 @@ const LeftController = () => {
 
       ws.onmessage = (event) => {
         const [key, value] = event.data.split("=");
+        console.log(key) // just chekcing whats coming
         switch (key) {
           case "TEMP_USER":
             setUserTemp(parseFloat(value));
@@ -45,10 +46,10 @@ const LeftController = () => {
           case "TEMP_MACHINE":
             setMachineTemp(parseFloat(value));
             break;
-          case "BLUE_INTENSITY":
+          case "SET_BLUE_INTENSITY":
             setBlueLight(parseFloat(value));
             break;
-          case "RED_INTENSITY":
+          case "SET_RED_INTENSITY":
             setRedLight(parseFloat(value));
             break;
           default:
