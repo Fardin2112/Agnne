@@ -17,7 +17,7 @@ export const setSessionTime = (req, res) => {
 };
 
 export const startSession = (req, res) => {
-  sendToESP("SESSION_TIME=900");
+  sendToESP("SESSION_TIME=15");
   res.send("Session started");
 };
 
