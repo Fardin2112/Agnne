@@ -23,10 +23,11 @@ const LeftController = () => {
   const socketRef = useRef(null);
   const reconnectIntervalRef = useRef(null);
 
+  // Store if initial values are set
+  const initializedRef = useRef({ red: false, blue: false });
+
   // Auto-Reconnect WebSocket Setup
   useEffect(() => {
-    let isMounted = true;
-
     const connectWebSocket = () => {
       const ws = new WebSocket("ws://localhost:3000");
       socketRef.current = ws;
@@ -38,7 +39,8 @@ const LeftController = () => {
 
       ws.onmessage = (event) => {
         const [key, value] = event.data.split("=");
-        console.log(key) // just chekcing whats coming
+        console.log(key, value);
+
         switch (key) {
           case "TEMP_USER":
             setUserTemp(parseFloat(value));
@@ -47,11 +49,18 @@ const LeftController = () => {
             setMachineTemp(parseFloat(value));
             break;
           case "SET_BLUE_INTENSITY":
-            setBlueLight(parseFloat(value));
+            if (!initializedRef.current.blue) {
+              setBlueLight(parseFloat(value));
+              initializedRef.current.blue = true;
+            }
             break;
           case "SET_RED_INTENSITY":
-            setRedLight(parseFloat(value));
+            if (!initializedRef.current.red) {
+              setRedLight(parseFloat(value));
+              initializedRef.current.red = true;
+            }
             break;
+          // IGNORE live RED_INTENSITY / BLUE_INTENSITY
           default:
             break;
         }
@@ -75,13 +84,11 @@ const LeftController = () => {
     connectWebSocket();
 
     return () => {
-      isMounted = false;
       clearInterval(reconnectIntervalRef.current);
       socketRef.current?.close();
     };
   }, [setUserTemp, setMachineTemp, setBlueLight, setRedLight]);
 
-  // Send message via WebSocket
   const sendWsMessage = (msg) => {
     const ws = socketRef.current;
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -89,21 +96,18 @@ const LeftController = () => {
     }
   };
 
-  // Blue light slider
   const handleBlueLightChange = (e) => {
     const newValue = Number(e.target.value);
     setBlueLight(newValue);
     sendWsMessage(`BLUE_INTENSITY=${newValue}`);
   };
 
-  // Red light slider
   const handleRedLightChange = (e) => {
     const newValue = Number(e.target.value);
     setRedLight(newValue);
     sendWsMessage(`RED_INTENSITY=${newValue}`);
   };
 
-  // Max temp handlers
   const increaseUserTemp = () => setMaxUserTemp((prev) => Math.min(prev + 1, 50));
   const decreaseUserTemp = () => setMaxUserTemp((prev) => Math.max(prev - 1, 0));
   const increaseMachineTemp = () => setMaxMachineTemp((prev) => Math.min(prev + 1, 50));
