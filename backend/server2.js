@@ -149,6 +149,7 @@ wss.on('connection', (ws) => {
 
   // Send initial state
   for (const [key, value] of Object.entries(currentState)) {
+    console.log(key,"value",value)
     ws.send(`${key}=${value}`);
   }
 

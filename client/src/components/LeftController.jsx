@@ -1,7 +1,8 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { AppContext } from "../context/AppContext";
 import { HiOutlineLightBulb } from "react-icons/hi";
+import axios from "axios";
 
 const LeftController = () => {
   const {
@@ -11,108 +12,77 @@ const LeftController = () => {
     redLight,
     setRedLight,
     userTemp,
-    setUserTemp,
     machineTemp,
-    setMachineTemp,
     maxUserTemp,
     setMaxUserTemp,
     maxMachineTemp,
     setMaxMachineTemp,
+    sendWsMessage, // ✅ From context
   } = useContext(AppContext);
 
-  const socketRef = useRef(null);
-  const reconnectIntervalRef = useRef(null);
+  // 🔵 Handle blue light slider change
+  const handleBlueLightChange = (e) => {
+    const newValue = Number(e.target.value);
+    setBlueLight(newValue); // update UI
+    sendWsMessage(`BLUE_INTENSITY=${newValue}`); // send to server
+  };
 
-  // Store if initial values are set
-  const initializedRef = useRef({ red: false, blue: false });
+  // 🔴 Handle red light slider change
+  const handleRedLightChange = (e) => {
+    const newValue = Number(e.target.value);
+    setRedLight(newValue); // update UI
+    sendWsMessage(`RED_INTENSITY=${newValue}`); // send to server
+  };
 
-  // Auto-Reconnect WebSocket Setup
-  useEffect(() => {
-    const connectWebSocket = () => {
-      const ws = new WebSocket("ws://localhost:3000");
-      socketRef.current = ws;
+  // 🔼 Increase max user temp and sync with backend
+  const increaseUserTemp = async () => {
+    const value = maxUserTemp + 1;
+    await MaxUserTempFun(value);
+    setMaxUserTemp((prev) => Math.min(prev + 1, 60));
+  };
 
-      ws.onopen = () => {
-        console.log("✅ Connected to WebSocket server");
-        clearInterval(reconnectIntervalRef.current);
-      };
+  // 🔽 Decrease max user temp and sync with backend
+  const decreaseUserTemp = async () => {
+    const value = maxUserTemp - 1;
+    await MaxUserTempFun(value);
+    setMaxUserTemp((prev) => Math.max(prev - 1, 0));
+  };
 
-      ws.onmessage = (event) => {
-        const [key, value] = event.data.split("=");
-        console.log(key, value);
-
-        switch (key) {
-          case "TEMP_USER":
-            setUserTemp(parseFloat(value));
-            break;
-          case "TEMP_MACHINE":
-            setMachineTemp(parseFloat(value));
-            break;
-          case "SET_BLUE_INTENSITY":
-            if (!initializedRef.current.blue) {
-              setBlueLight(parseFloat(value));
-              initializedRef.current.blue = true;
-            }
-            break;
-          case "SET_RED_INTENSITY":
-            if (!initializedRef.current.red) {
-              setRedLight(parseFloat(value));
-              initializedRef.current.red = true;
-            }
-            break;
-          // IGNORE live RED_INTENSITY / BLUE_INTENSITY
-          default:
-            break;
-        }
-      };
-
-      ws.onclose = () => {
-        console.warn("⚠️ WebSocket disconnected. Attempting to reconnect...");
-        reconnectIntervalRef.current = setInterval(() => {
-          if (!socketRef.current || socketRef.current.readyState === WebSocket.CLOSED) {
-            connectWebSocket();
-          }
-        }, 2000);
-      };
-
-      ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
-        ws.close();
-      };
-    };
-
-    connectWebSocket();
-
-    return () => {
-      clearInterval(reconnectIntervalRef.current);
-      socketRef.current?.close();
-    };
-  }, [setUserTemp, setMachineTemp, setBlueLight, setRedLight]);
-
-  const sendWsMessage = (msg) => {
-    const ws = socketRef.current;
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(msg);
+  // ⬆️⬇️ Send max user temp update to server
+  const MaxUserTempFun = async (value) => {
+    try {
+      await axios.post("http://localhost:3000/api/device/user-maxtemp", { value });
+      console.log("✅ Max User Temp Set:", value);
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
-  const handleBlueLightChange = (e) => {
-    const newValue = Number(e.target.value);
-    setBlueLight(newValue);
-    sendWsMessage(`BLUE_INTENSITY=${newValue}`);
+  // 🔼 Increase max machine temp and sync with backend
+  const increaseMachineTemp = async () => {
+    const value = maxMachineTemp + 1;
+    await MaxMachineTempFun(value);
+    setMaxMachineTemp((prev) => Math.min(prev + 1, 75));
   };
 
-  const handleRedLightChange = (e) => {
-    const newValue = Number(e.target.value);
-    setRedLight(newValue);
-    sendWsMessage(`RED_INTENSITY=${newValue}`);
+  // 🔽 Decrease max machine temp and sync with backend
+  const decreaseMachineTemp = async () => {
+    const value = maxMachineTemp - 1;
+    await MaxMachineTempFun(value);
+    setMaxMachineTemp((prev) => Math.max(prev - 1, 0));
   };
 
-  const increaseUserTemp = () => setMaxUserTemp((prev) => Math.min(prev + 1, 50));
-  const decreaseUserTemp = () => setMaxUserTemp((prev) => Math.max(prev - 1, 0));
-  const increaseMachineTemp = () => setMaxMachineTemp((prev) => Math.min(prev + 1, 50));
-  const decreaseMachineTemp = () => setMaxMachineTemp((prev) => Math.max(prev - 1, 0));
+  // ⬆️⬇️ Send max machine temp update to server
+  const MaxMachineTempFun = async (value) => {
+    try {
+      await axios.post("http://localhost:3000/api/device/machine-maxtemp", { value });
+      console.log("✅ Max Machine Temp Set:", value);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
+  // Calculate percentage for circle progress
   const userTempPercentage = maxUserTemp === 0 ? 0 : (userTemp / maxUserTemp) * 100;
   const machineTempPercentage = maxMachineTemp === 0 ? 0 : (machineTemp / maxMachineTemp) * 100;
   const circumference = 376.99;
@@ -120,7 +90,7 @@ const LeftController = () => {
   return (
     <div className="flex justify-center items-center h-full w-full">
       <div className="grid grid-cols-2 gap-x-4 gap-y-2 w-full h-full">
-        {/* Blue Light Slider */}
+        {/* 🔵 Blue Light Slider */}
         <div className="flex flex-col items-center pt-1">
           <div className="flex flex-col h-full items-center">
             <input
@@ -143,7 +113,7 @@ const LeftController = () => {
           </div>
         </div>
 
-        {/* Red Light Slider */}
+        {/* 🔴 Red Light Slider */}
         <div className="flex flex-col h-full pt-1 items-center">
           <div className="flex flex-col h-full items-center">
             <input
@@ -166,7 +136,7 @@ const LeftController = () => {
           </div>
         </div>
 
-        {/* User Temperature Control */}
+        {/* 🌡️ User Temp Control */}
         <div className="flex flex-col items-center">
           <div className="w-32 h-32 relative flex items-center justify-center">
             <svg className="absolute w-full h-full" viewBox="0 0 128 128">
@@ -197,7 +167,7 @@ const LeftController = () => {
           </div>
         </div>
 
-        {/* Machine Temperature Control */}
+        {/* ⚙️ Machine Temp Control */}
         <div className="flex flex-col items-center">
           <div className="w-32 h-32 relative flex items-center justify-center">
             <svg className="absolute w-full h-full" viewBox="0 0 128 128">

@@ -2,9 +2,8 @@ import React, { useContext, useState } from 'react';
 import { AppContext } from "../context/AppContext";
 
 function Setting() {
-  const { isDarkMode, toggleDarkMode } = useContext(AppContext);
+  const { isDarkMode, toggleDarkMode , powerUsage } = useContext(AppContext);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
-  const powerConsumption = "24.5 W";
 
   const toggleVoiceCommands = () => {
     setVoiceEnabled(prev => !prev);
@@ -57,7 +56,7 @@ function Setting() {
       <div className="mb-8">
         <h2 className="text-lg font-bold mb-4">POWER CONSUMPTION</h2>
         <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`}>
-          <span className="text-lg font-bold">{powerConsumption}</span>
+          <span className="text-lg font-bold">{powerUsage}</span>
         </div>
       </div>
     

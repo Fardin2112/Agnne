@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import { FaPlay, FaPause, FaFan, FaStop, FaMinus, FaPlus } from "react-icons/fa6";
 import { AppContext } from "../context/AppContext";
@@ -11,32 +11,42 @@ function RightController() {
   const [isRunning, setIsRunning] = useState(false);
   const [userFanSpeed, setUserFanSpeed] = useState(50);
   const [machineFanSpeed, setMachineFanSpeed] = useState(50);
+  const timerRef = useRef(null); // 🧠 Stores the timer id
 
   const isInitialState = timeLeft === sessionTime * 60;
 
-  // ========== Timer Effect ==========
+  // 🕒 Function to handle timer countdown
+  const startTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev > 0) return prev - 1;
+        clearInterval(timerRef.current);
+        stopSession();
+        setIsRunning(false);
+        return 0;
+      });
+    }, 1000);
+  };
+
+  // 🧠 useEffect to clean up interval on unmount or stop
   useEffect(() => {
-    let timer;
+    return () => clearInterval(timerRef.current);
+  }, []);
 
-    if (isRunning && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (isRunning && timeLeft === 0) {
-      console.log("⏱️ Session time finished");
-      stopSession(); // ✅ stop ESP32 session
-      setIsRunning(false);
+  useEffect(() => {
+    if (isRunning) {
+      startTimer();
+    } else {
+      clearInterval(timerRef.current);
     }
-
-    return () => clearInterval(timer);
-  }, [isRunning, timeLeft]);
+  }, [isRunning]);
 
   useEffect(() => {
     setTimeLeft(sessionTime * 60);
   }, [sessionTime]);
 
   // ========== API Calls ==========
-
   const sendSessionTime = async () => {
     try {
       await axios.post("http://localhost:3000/api/device/session", {
@@ -48,10 +58,11 @@ function RightController() {
     }
   };
 
-  const startSession = async () => {
+  const handleStart = async () => {
     try {
       await sendSessionTime();
-      await axios.post("http://localhost:3000/api/device/session/start");
+      setIsRunning(true);
+      await axios.post("http://localhost:3000/api/device/session/start", { sessionTime });
       console.log("✅ Session started");
     } catch (error) {
       console.error("❌ Start session failed", error);
@@ -77,25 +88,31 @@ function RightController() {
   };
 
   // ========== Event Handlers ==========
-
-  const handleStartResume = () => {
-    if (!isRunning) {
-      if (isInitialState) {
-        startSession();
-      }
+  const handleResume = async () => {
+    try {
+      await axios.post("http://localhost:3000/api/device/resume");
+      console.log("Session is Resumed");
       setIsRunning(true);
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
-  const handlePause = () => {
-    setIsRunning(false);
-    console.log("⏸️ Paused (frontend only)");
+  const handlePause = async () => {
+    try {
+      await axios.post("http://localhost:3000/api/device/pause");
+      console.log("⏸️ Session paused");
+      setIsRunning(false);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   const handleStop = () => {
     stopSession();
     setIsRunning(false);
     setTimeLeft(sessionTime * 60);
+    clearInterval(timerRef.current);
   };
 
   const handleIncreaseTimeChange = () => setSessionTime((prev) => Math.min(60, prev + 1));
@@ -114,7 +131,6 @@ function RightController() {
   };
 
   // ========== UI ==========
-
   return (
     <div className="text-white flex flex-col items-center w-full h-full">
       <p className={`${isDarkMode ? "text-white" : "text-black"} font-semibold text-lg`}>
@@ -168,15 +184,22 @@ function RightController() {
           </>
         ) : (
           <>
-            <button onClick={handleStartResume} className="px-6 py-2 rounded-full flex items-center gap-2 bg-green-500">
-              <FaPlay />
-              {isInitialState ? "Start" : "Resume"}
-            </button>
-            {!isInitialState && (
-              <button onClick={handleStop} className="px-6 py-2 rounded-full flex items-center gap-2 bg-red-500">
-                <FaStop />
-                Stop
+            {isInitialState ? (
+              <button onClick={handleStart} className="px-6 py-2 rounded-full flex items-center gap-2 bg-green-500">
+                <FaPlay />
+                Start
               </button>
+            ) : (
+              <>
+                <button onClick={handleResume} className="px-6 py-2 rounded-full flex items-center gap-2 bg-green-500">
+                  <FaPlay />
+                  Resume
+                </button>
+                <button onClick={handleStop} className="px-6 py-2 rounded-full flex items-center gap-2 bg-red-500">
+                  <FaStop />
+                  Stop
+                </button>
+              </>
             )}
           </>
         )}
