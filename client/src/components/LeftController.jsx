@@ -88,11 +88,18 @@ const LeftController = () => {
   const circumference = 376.99;
 
   return (
-    <div className="flex justify-center items-center h-full w-full">
-      <div className="grid grid-cols-2 gap-x-4 gap-y-2 w-full h-full">
+    <div className="flex flex-col justify-center items-center h-full w-full pt-10">
+      <div className="flex flex-col w-[90%] h-[40%] items-center p-2">
         {/* 🔵 Blue Light Slider */}
-        <div className="flex flex-col items-center pt-1">
-          <div className="flex flex-col h-full items-center">
+        <div className="flex flex-col w-full items-center ">
+          <div className="flex justify-between items-center w-full px-5 pt-1 text-xl font-bold text-blue-500">
+            <div className="flex gap-2">
+            <HiOutlineLightBulb className="text-blue-400 text-2xl" />
+            <p>Blue light</p>
+            </div>
+            <p>{blueLight}%</p>
+          </div>
+          <div className="flex flex-col w-full h-full items-center">
             <input
               type="range"
               min="0"
@@ -102,20 +109,24 @@ const LeftController = () => {
               style={{
                 background: `linear-gradient(to right, #3b82f6 ${blueLight}%, #e5e7eb ${blueLight}%)`,
               }}
-              className="w-[200px] mt-24 h-4 appearance-none bg-gray-300 rounded-full outline-none transform -rotate-90 origin-center cursor-pointer
-                [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-10 [&::-webkit-slider-thumb]:bg-blue-300 [&::-webkit-slider-thumb]:rounded-full
+              className="w-[100%] h-5 appearance-none bg-gray-300 rounded-full outline-none transform origin-center cursor-pointer
+                [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-blue-400 [&::-webkit-slider-thumb]:rounded-full
                 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer"
             />
           </div>
-          <div className="flex gap-2 items-center pt-1 text-xl font-bold text-blue-500">
-            <HiOutlineLightBulb className="text-blue-400 text-2xl" />
-            <p>{blueLight}%</p>
-          </div>
+          
         </div>
 
         {/* 🔴 Red Light Slider */}
-        <div className="flex flex-col h-full pt-1 items-center">
-          <div className="flex flex-col h-full items-center">
+        <div className="flex flex-col pb-10 w-full pt-8 items-center">
+        <div className="flex justify-between px-5 w-full items-center pt-1 text-xl font-bold text-red-500">
+          <div className="flex gap-2">
+          <HiOutlineLightBulb className="text-red-400 text-2xl" />
+          <p>Red light</p>
+          </div>   
+            <p>{redLight}%</p>
+          </div>
+          <div className="flex flex-col h-full w-full items-center">
             <input
               type="range"
               min="0"
@@ -125,17 +136,18 @@ const LeftController = () => {
               style={{
                 background: `linear-gradient(to right, #ef4444 ${redLight}%, #e5e7eb ${redLight}%)`,
               }}
-              className="w-[200px] mt-24 h-4 appearance-none bg-gray-300 rounded-full outline-none transform -rotate-90 origin-center cursor-pointer
-                [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-10 [&::-webkit-slider-thumb]:bg-red-300 [&::-webkit-slider-thumb]:rounded-full
+              className="w-[100%] h-5 appearance-none bg-gray-300 rounded-full outline-none transform origin-center cursor-pointer
+                [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-red-400 [&::-webkit-slider-thumb]:rounded-full
                 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer"
             />
           </div>
-          <div className="flex gap-2 items-center pt-1 text-xl font-bold text-red-500">
-            <HiOutlineLightBulb className="text-red-400 text-2xl" />
-            <p>{redLight}%</p>
-          </div>
+          
         </div>
 
+      </div>
+
+      {/* below part  user and machine temp */}
+      <div className="flex h-[60%] justify-evenly w-full pb-3">
         {/* 🌡️ User Temp Control */}
         <div className="flex flex-col items-center">
           <div className="w-32 h-32 relative flex items-center justify-center">
@@ -157,12 +169,12 @@ const LeftController = () => {
           </div>
           <p className="mt-2 text-green-500 font-bold">User Temp</p>
           <div className={`flex gap-2 mt-2 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-            <button onClick={decreaseUserTemp} className="px-3 py-1 rounded">
-              <FaMinus />
+            <button onClick={decreaseUserTemp} className="px-2 py-2 rounded">
+              <FaMinus className="text-2xl"/>
             </button>
-            <p>{maxUserTemp}</p>
-            <button onClick={increaseUserTemp} className="px-3 py-1 rounded">
-              <FaPlus />
+            <p className="px-2 py-2 text-xl">{maxUserTemp}</p>
+            <button onClick={increaseUserTemp} className="px-2 py-2 rounded">
+              <FaPlus className="text-2xl"/>
             </button>
           </div>
         </div>
@@ -188,16 +200,16 @@ const LeftController = () => {
           </div>
           <p className="mt-2 text-orange-500 font-bold">Machine Temp</p>
           <div className={`flex gap-2 mt-2 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-            <button onClick={decreaseMachineTemp} className="px-3 py-1 rounded">
-              <FaMinus />
+            <button onClick={decreaseMachineTemp} className="px-2 py-2 rounded">
+              <FaMinus className="text-2xl"/>
             </button>
-            <p>{maxMachineTemp}</p>
-            <button onClick={increaseMachineTemp} className="px-3 py-1 rounded">
-              <FaPlus />
+            <p className="px-2 py-2 text-xl">{maxMachineTemp}</p>
+            <button onClick={increaseMachineTemp} className="px-2 py-2 rounded">
+              <FaPlus className="text-2xl"/>
             </button>
           </div>
         </div>
-      </div>
+        </div>
     </div>
   );
 };

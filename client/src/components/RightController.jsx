@@ -4,13 +4,12 @@ import { FaPlay, FaPause, FaFan, FaStop, FaMinus, FaPlus } from "react-icons/fa6
 import { AppContext } from "../context/AppContext";
 
 function RightController() {
-  const { isDarkMode } = useContext(AppContext);
+  const { isDarkMode, userFanSpeed,machineFanSpeed, setUserFanSpeed, setMachineFanSpeed } = useContext(AppContext);
 
   const [sessionTime, setSessionTime] = useState(15);
   const [timeLeft, setTimeLeft] = useState(sessionTime * 60);
   const [isRunning, setIsRunning] = useState(false);
-  const [userFanSpeed, setUserFanSpeed] = useState(50);
-  const [machineFanSpeed, setMachineFanSpeed] = useState(50);
+  
   const timerRef = useRef(null); // 🧠 Stores the timer id
 
   const isInitialState = timeLeft === sessionTime * 60;
@@ -160,17 +159,17 @@ function RightController() {
       </div>
 
       {/* Time Controls */}
-      <div className="flex gap-4 mt-3">
-        <button onClick={handleDecreaseTimeChange} className={`px-3 text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-          <FaMinus />
+      <div className="flex gap-4">
+        <button onClick={handleDecreaseTimeChange} className={`px-3 py-1 text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+          <FaMinus className="text-2xl"/>
         </button>
         <button onClick={handleIncreaseTimeChange} className={`px-3 text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-          <FaPlus />
+          <FaPlus className="text-2xl"/>
         </button>
       </div>
 
       {/* Control Buttons */}
-      <div className="mt-4 flex gap-3">
+      <div className="mt-1 flex gap-3 font-semibold">
         {isRunning ? (
           <>
             <button onClick={handlePause} className="px-6 py-2 rounded-full flex items-center gap-2 bg-yellow-500">
@@ -206,12 +205,12 @@ function RightController() {
       </div>
 
       {/* Fan Sliders */}
-      <div className="w-[80%] mt-6 space-y-4">
+      <div className="w-full mt-6 space-y-2">
         {/* User Fan */}
-        <div>
+        <div className="w-full">
           <p className="text-center">User Fan</p>
-          <div className="flex items-center gap-3">
-            <FaFan className="text-blue-400" />
+          <div className="flex items-center gap-3 ">
+            <FaFan className="text-blue-400 text-2xl" />
             <input
               type="range"
               min="0"
@@ -221,14 +220,15 @@ function RightController() {
               style={{ background: `linear-gradient(to right, blue ${userFanSpeed}%, #ddd ${userFanSpeed}%)` }}
               className="w-full appearance-none h-2 rounded-lg transition-all"
             />
+             <p className="text-xl pr-1">{userFanSpeed}</p>
           </div>
         </div>
 
         {/* Machine Fan */}
-        <div>
+        <div className="w-full">
           <p className="text-center">Machine Fan</p>
           <div className="flex items-center gap-3">
-            <FaFan className="text-yellow-400" />
+            <FaFan className="text-yellow-400 text-2xl" />
             <input
               type="range"
               min="0"
@@ -238,6 +238,7 @@ function RightController() {
               style={{ background: `linear-gradient(to right, yellow ${machineFanSpeed}%, #ddd ${machineFanSpeed}%)` }}
               className="w-full appearance-none h-2 rounded-lg transition-all"
             />
+            <p className="text-xl pr-1">{machineFanSpeed}</p>
           </div>
         </div>
       </div>

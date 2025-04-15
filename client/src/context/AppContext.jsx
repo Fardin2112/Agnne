@@ -24,11 +24,14 @@ const AppContextProvider = (props) => {
   const [blueLight, setBlueLight] = useState(0);                  // Blue light intensity
   const [redLight, setRedLight] = useState(0);                    // Red light intensity
 
-  const [userTemp, setUserTemp] = useState(25);                   // Current user sensor temp
+  const [userTemp, setUserTemp] = useState(0);                   // Current user sensor temp
   const [machineTemp, setMachineTemp] = useState(0);             // Current machine sensor temp
 
   const [maxUserTemp, setMaxUserTemp] = useState(0);             // Target user temp
   const [maxMachineTemp, setMaxMachineTemp] = useState(0);       // Target machine temp
+
+  const [userFanSpeed, setUserFanSpeed] = useState(0);             // user fan value
+  const [machineFanSpeed, setMachineFanSpeed] = useState(0);     // machine fan value
 
   
 
@@ -57,12 +60,18 @@ const AppContextProvider = (props) => {
 
   // 🧠 Setup WebSocket connection once on mount
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:3000");
+    let ws;
+    let reconnectInterval;
+
+    const connectWebSocket = () => {
+    ws  = new WebSocket("ws://localhost:3000");
     wsRef.current = ws;
 
     // ✅ Called when WebSocket connects successfully
     ws.onopen = () => {
       console.log("✅ WebSocket connected");
+      setConnected(true);
+      clearTimeout(reconnectInterval);
     };
 
     // 🔄 Handle incoming data and sync it with state
@@ -114,7 +123,14 @@ const AppContextProvider = (props) => {
             break;
           case "ERROR=OVERHEAT":
             setOverheatError(true);
-            break;  
+            console.log("Overheat from frontend")
+            break;
+          case "FAN_USER" :
+            setUserFanSpeed(parsedValue);
+            break;
+          case "FAN_MACHINE" :
+            setMachineFanSpeed(parsedValue);
+            break;      
           default:
             break; // Other values are stored in espData
         }
@@ -125,18 +141,24 @@ const AppContextProvider = (props) => {
     ws.onclose = () => {
       console.warn("❌ WebSocket disconnected");
       setConnected(false);
+      reconnectInterval = setTimeout(connectWebSocket,5000); // Retry in 5 second
     };
 
     // ⚠️ Handle unexpected error and close the connection
-    ws.onerror = (err) => {
-      console.error("WebSocket error:", err.message);
-      ws.close();
-    };
+      ws.onerror = (err) => {
+        console.error("WebSocket error:", err.message);
+        ws.close(); // This triggers `onclose` and retry
+      };
+    };  
+
+    connectWebSocket();  // Intitial call
 
     // 🧹 Clean up WebSocket on component unmount
     return () => {
-      ws.close();
+      if (ws) ws.close();
+      clearTimeout(reconnectInterval); // clean up retry timeout
     };
+
   }, []);
 
   // 📤 Function to send command to server (and then ESP32)
@@ -166,6 +188,9 @@ const AppContextProvider = (props) => {
 
     maxUserTemp, setMaxUserTemp,
     maxMachineTemp, setMaxMachineTemp,
+
+    userFanSpeed, setUserFanSpeed,
+    machineFanSpeed, setMachineFanSpeed, 
 
     emergencyStop,setEmergencyStop,   // Errors
     overheatError, setOverheatError,
