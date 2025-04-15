@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { AppContext } from "../context/AppContext";
 import { HiOutlineLightBulb } from "react-icons/hi";
+import { TbTemperatureSnow } from "react-icons/tb";
 import axios from "axios";
 
 const LeftController = () => {
@@ -88,17 +89,11 @@ const LeftController = () => {
   const circumference = 376.99;
 
   return (
-    <div className="flex flex-col justify-center items-center h-full w-full pt-10">
-      <div className="flex flex-col w-[90%] h-[40%] items-center p-2">
+    <div className="flex justify-center items-center h-full w-full">
+      <div className="flex w-[200px] h-full items-center pl-2 pt-10">
         {/* 🔵 Blue Light Slider */}
-        <div className="flex flex-col w-full items-center ">
-          <div className="flex justify-between items-center w-full px-5 pt-1 text-xl font-bold text-blue-500">
-            <div className="flex gap-2">
-            <HiOutlineLightBulb className="text-blue-400 text-2xl" />
-            <p>Blue light</p>
-            </div>
-            <p>{blueLight}%</p>
-          </div>
+        <div className="flex flex-col w-[100px] h-full items-center">
+          
           <div className="flex flex-col w-full h-full items-center">
             <input
               type="range"
@@ -109,45 +104,51 @@ const LeftController = () => {
               style={{
                 background: `linear-gradient(to right, #3b82f6 ${blueLight}%, #e5e7eb ${blueLight}%)`,
               }}
-              className="w-[100%] h-5 appearance-none bg-gray-300 rounded-full outline-none transform origin-center cursor-pointer
-                [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-blue-400 [&::-webkit-slider-thumb]:rounded-full
+              className="w-[350px] mt-44 h-5 appearance-none bg-gray-300 rounded-full outline-none transform -rotate-90 origin-center cursor-pointer
+                [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:bg-blue-400 [&::-webkit-slider-thumb]:rounded-full
                 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer"
             />
+          </div>
+          <div className="flex justify-between items-center w-full h-full px-5 pt-9 text-xl font-bold text-blue-500">
+            <div className="flex gap-1">
+            <HiOutlineLightBulb className="text-blue-400 text-2xl" />
+            {/* <p>Blue light</p> */}
+            </div>
+            <p>{blueLight}%</p>
           </div>
           
         </div>
 
         {/* 🔴 Red Light Slider */}
-        <div className="flex flex-col pb-10 w-full pt-8 items-center">
-        <div className="flex justify-between px-5 w-full items-center pt-1 text-xl font-bold text-red-500">
-          <div className="flex gap-2">
-          <HiOutlineLightBulb className="text-red-400 text-2xl" />
-          <p>Red light</p>
-          </div>   
-            <p>{redLight}%</p>
-          </div>
+        <div className="flex flex-col w-[100px] h-full items-center">
           <div className="flex flex-col h-full w-full items-center">
             <input
               type="range"
               min="0"
               max="100"
               value={redLight}
-              onChange={handleRedLightChange}
+              onChange={handleRedLightChange}   
               style={{
                 background: `linear-gradient(to right, #ef4444 ${redLight}%, #e5e7eb ${redLight}%)`,
               }}
-              className="w-[100%] h-5 appearance-none bg-gray-300 rounded-full outline-none transform origin-center cursor-pointer
-                [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-red-400 [&::-webkit-slider-thumb]:rounded-full
+              className="w-[350px] mt-44 h-5 appearance-none bg-gray-300 rounded-full outline-none transform -rotate-90 origin-center cursor-pointer
+                [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:bg-red-400 [&::-webkit-slider-thumb]:rounded-full
                 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer"
             />
           </div>
-          
+          <div className="flex justify-between items-center w-full h-full px-5 pt-9 text-xl font-bold text-red-500">
+          <div className="flex gap-2">
+          <HiOutlineLightBulb className="text-red-400 text-2xl" />
+          {/* <p>Red light</p> */}
+          </div>   
+            <p>{redLight}%</p>
+          </div>
         </div>
 
       </div>
 
       {/* below part  user and machine temp */}
-      <div className="flex h-[60%] justify-evenly w-full pb-3">
+      <div className="flex flex-col w-full h-full pb-3 pt-3">
         {/* 🌡️ User Temp Control */}
         <div className="flex flex-col items-center">
           <div className="w-32 h-32 relative flex items-center justify-center">
@@ -167,7 +168,10 @@ const LeftController = () => {
             </svg>
             <p className="text-xl font-bold text-green-500 z-10">{userTemp}°C</p>
           </div>
-          <p className="mt-2 text-green-500 font-bold">User Temp</p>
+          <div className="flex items-center  gap-2 mt-2 text-green-500 font-bold">
+            <TbTemperatureSnow className="text-2xl" />
+            <p>User Temp</p>
+            </div>
           <div className={`flex gap-2 mt-2 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
             <button onClick={decreaseUserTemp} className="px-2 py-2 rounded">
               <FaMinus className="text-2xl"/>
@@ -180,7 +184,7 @@ const LeftController = () => {
         </div>
 
         {/* ⚙️ Machine Temp Control */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center pt-3">
           <div className="w-32 h-32 relative flex items-center justify-center">
             <svg className="absolute w-full h-full" viewBox="0 0 128 128">
               <circle cx="64" cy="64" r="60" fill="none" stroke="#e5e7eb" strokeWidth="8" />
@@ -198,7 +202,10 @@ const LeftController = () => {
             </svg>
             <p className="text-xl font-bold text-orange-500 z-10">{machineTemp}°C</p>
           </div>
-          <p className="mt-2 text-orange-500 font-bold">Machine Temp</p>
+          <div className="flex items-center gap-2 mt-2 text-orange-500 font-bold">
+          <TbTemperatureSnow className="text-2xl" />
+            <p>Machine Temp</p>
+            </div>
           <div className={`flex gap-2 mt-2 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
             <button onClick={decreaseMachineTemp} className="px-2 py-2 rounded">
               <FaMinus className="text-2xl"/>

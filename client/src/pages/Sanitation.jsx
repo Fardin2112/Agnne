@@ -64,9 +64,7 @@ function Sanitation() {
     setProgress(((minutes * 60 - timeLeft) / (minutes * 60)) * 100);
   }, [timeLeft, minutes]);
 
-  // ========================
-  // API Functions (inline)
-  // ========================
+  // API Functions
   const handleStart = async () => {
     try {
       const res = await axios.post("http://localhost:3000/api/device/sanitation/start", { time: minutes });
@@ -103,76 +101,93 @@ function Sanitation() {
   };
 
   const handleStop = async () => {
-
     try {
-      await axios.post("http://localhost:3000/api/device/sanitation/stop")
+      await axios.post("http://localhost:3000/api/device/sanitation/stop");
       setSanitationMode(false);
       setIsPaused(false);
       setTimeLeft(minutes * 60);
       localStorage.removeItem("sanitationStartTime");
       localStorage.removeItem("sanitationMinutes");
     } catch (error) {
-        console.log(error.message,"Error in stop sanitation from frontend")
+      console.log(error.message, "Error in stop sanitation from frontend");
     }
   };
 
   return (
-    <div className={`pt-32 h-full transition-all ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-      <div className="flex flex-col justify-center items-center">
-        <h3 className="text-3xl font-bold mb-4">Sanitation Mode</h3>
+    <div
+      className={`pt-12 flex items-center justify-center transition-all duration-500 ${
+        isDarkMode ? "bg-gradient-to-br from-gray-900 to-black text-white" : "bg-gradient-to-br from-gray-100 to-white text-black"
+      }`}
+    >
+      <div className="relative p-6 rounded-3xl shadow-2xl bg-opacity-80 backdrop-blur-lg border border-opacity-20 border-gray-500 w-[90%] max-w-[900px]">
+        {/* Title */}
+        <h3 className="text-3xl font-extrabold text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+          Sanitation Mode
+        </h3>
 
         {/* Time Controls */}
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center justify-center gap-4 mb-4">
           <button
-            className="px-2 py-1 text-xl rounded bg-gray-300 dark:bg-gray-700"
+            className={`p-2 rounded-full shadow-lg transition-transform duration-200 transform hover:scale-110 ${
+              isDarkMode ? "bg-gray-700" : "bg-gray-300"
+            } ${sanitationMode ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => setMinutes((prev) => Math.max(prev - 1, 1))}
             disabled={sanitationMode}
           >
-            <FaMinus />
+            <FaMinus className="text-lg" />
           </button>
-          <p className="text-xl font-bold">{minutes} min</p>
+          <p className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+            {minutes} min
+          </p>
           <button
-            className="px-2 py-1 text-xl rounded bg-gray-300 dark:bg-gray-700"
+            className={`p-2 rounded-full shadow-lg transition-transform duration-200 transform hover:scale-110 ${
+              isDarkMode ? "bg-gray-700" : "bg-gray-300"
+            } ${sanitationMode ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => setMinutes((prev) => Math.min(prev + 1, 15))}
             disabled={sanitationMode}
           >
-            <FaPlus />
+            <FaPlus className="text-lg" />
           </button>
         </div>
 
         {/* Timer Display */}
-        <p className="text-lg font-semibold mb-3">
+        <p className="text-center text-2xl font-bold mb-4">
           Time Left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
         </p>
 
-        {/* Progress Bar */}
-        <div className="w-72 h-4 bg-gray-300 rounded-full overflow-hidden my-4">
+        {/* Horizontal Progress Bar */}
+        <div className="w-full h-1 bg-gray-300 rounded-full overflow-hidden mb-6">
           <div
-            className={`h-full rounded-full transition-all duration-300 ${
-              sanitationMode && !isPaused ? "bg-blue-500" : "bg-gray-500"
-            }`}
+            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
             style={{ width: `${progress}%` }}
           ></div>
         </div>
 
         {/* Info */}
-        <div className="py-3 text-lg font-semibold">
-          <p className="flex items-center gap-1">
-            <HiOutlineLightBulb className="text-blue-400 text-2xl" /> Blue Light: 100%
+        <div className="text-center mb-6">
+          <p className="flex items-center justify-center gap-2 text-lg font-semibold">
+            <HiOutlineLightBulb
+              className={`text-blue-400 text-2xl ${sanitationMode && !isPaused ? "animate-blink" : ""}`}
+            />
+            Blue Light: 100%
           </p>
-          <p className="flex items-center gap-2">
-            <FaFan className="text-yellow-400" /> Fans Max: {minutes} min
+          <p className="flex items-center justify-center gap-2 text-lg font-semibold">
+            <FaFan
+              className={`text-yellow-400 ${sanitationMode && !isPaused ? "animate-spin" : ""}`}
+            />
+            Fans Max: {minutes} min
           </p>
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-4 flex gap-3">
+        <div className="flex justify-center gap-4">
           {!sanitationMode && !isPaused && (
             <button
               onClick={handleStart}
-              className="px-5 py-2 text-white text-lg font-semibold rounded-xl shadow-lg bg-green-600 hover:bg-green-700 active:scale-95 transition-all"
+              className="relative px-6 py-2 text-lg font-semibold text-white rounded-xl bg-gradient-to-r from-green-500 to-green-700 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95"
             >
               Start
+              <div className="absolute inset-0 rounded-xl bg-green-400 opacity-0 hover:opacity-20 transition-opacity"></div>
             </button>
           )}
 
@@ -180,15 +195,17 @@ function Sanitation() {
             <>
               <button
                 onClick={handlePause}
-                className="px-5 py-2 text-white text-lg font-semibold rounded-xl shadow-lg bg-yellow-500 hover:bg-yellow-600 active:scale-95 transition-all"
+                className="relative px-6 py-2 text-lg font-semibold text-white rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-700 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95"
               >
                 Pause
+                <div className="absolute inset-0 rounded-xl bg-yellow-400 opacity-0 hover:opacity-20 transition-opacity"></div>
               </button>
               <button
                 onClick={handleStop}
-                className="px-5 py-2 text-white text-lg font-semibold rounded-xl shadow-lg bg-red-500 hover:bg-red-600 active:scale-95 transition-all"
+                className="relative px-6 py-2 text-lg font-semibold text-white rounded-xl bg-gradient-to-r from-red-500 to-red-700 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95"
               >
                 Stop
+                <div className="absolute inset-0 rounded-xl bg-red-400 opacity-0 hover:opacity-20 transition-opacity"></div>
               </button>
             </>
           )}
@@ -196,13 +213,40 @@ function Sanitation() {
           {sanitationMode && isPaused && (
             <button
               onClick={handleResume}
-              className="px-5 py-2 text-white text-lg font-semibold rounded-xl shadow-lg bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all"
+              className="relative px-6 py-2 text-lg font-semibold text-white rounded-xl bg-gradient-to-r from-blue-500 to-blue-700 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95"
             >
               Resume
+              <div className="absolute inset-0 rounded-xl bg-blue-400 opacity-0 hover:opacity-20 transition-opacity"></div>
             </button>
           )}
         </div>
       </div>
+
+      {/* Custom CSS for Animations */}
+      <style jsx>{`
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+        @keyframes blink {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.3;
+          }
+        }
+        .animate-spin {
+          animation: spin 2s linear infinite;
+        }
+        .animate-blink {
+          animation: blink 1.5s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 }

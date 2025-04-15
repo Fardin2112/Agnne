@@ -21,7 +21,7 @@ function App() {
   return (
     <div
       className={`h-screen w-screen flex flex-col ${
-        isDarkMode ? "bg-black text-white" : "bg-white text-black"
+        isDarkMode ? "bg-gradient-to-br from-gray-900 to-black text-white" : "bg-gradient-to-br from-gray-100 to-white text-black"
       }`}
     >
       {showAnimation ? (

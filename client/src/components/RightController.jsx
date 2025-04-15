@@ -4,11 +4,11 @@ import { FaPlay, FaPause, FaFan, FaStop, FaMinus, FaPlus } from "react-icons/fa6
 import { AppContext } from "../context/AppContext";
 
 function RightController() {
-  const { isDarkMode, userFanSpeed,machineFanSpeed, setUserFanSpeed, setMachineFanSpeed } = useContext(AppContext);
+  const { isDarkMode, userFanSpeed,machineFanSpeed, setUserFanSpeed, setMachineFanSpeed,isRunning, setIsRunning } = useContext(AppContext);
 
   const [sessionTime, setSessionTime] = useState(15);
   const [timeLeft, setTimeLeft] = useState(sessionTime * 60);
-  const [isRunning, setIsRunning] = useState(false);
+  
   
   const timerRef = useRef(null); // 🧠 Stores the timer id
 
@@ -205,40 +205,49 @@ function RightController() {
       </div>
 
       {/* Fan Sliders */}
-      <div className="w-full mt-6 space-y-2">
+      <div className="w-full mt-6 space-y-7 pr-5">
         {/* User Fan */}
         <div className="w-full">
-          <p className="text-center">User Fan</p>
+        <div className="flex items-center justify-between text-center font-semibold text-green-500">
+            <div className="flex gap-2">
+              <FaFan className="text-xl" />
+              <p>User Fan</p> 
+            </div>
+            <p className="text-xl">{userFanSpeed}</p>
+          </div>
           <div className="flex items-center gap-3 ">
-            <FaFan className="text-blue-400 text-2xl" />
             <input
               type="range"
               min="0"
               max="100"
               value={userFanSpeed}
               onChange={handleUserfan}
-              style={{ background: `linear-gradient(to right, blue ${userFanSpeed}%, #ddd ${userFanSpeed}%)` }}
-              className="w-full appearance-none h-2 rounded-lg transition-all"
+              style={{ background: `linear-gradient(to right, green ${userFanSpeed}%, #ddd ${userFanSpeed}%)` }}
+              className="w-full appearance-none h-3 rounded-lg transition-all"
             />
-             <p className="text-xl pr-1">{userFanSpeed}</p>
           </div>
         </div>
 
         {/* Machine Fan */}
         <div className="w-full">
-          <p className="text-center">Machine Fan</p>
-          <div className="flex items-center gap-3">
-            <FaFan className="text-yellow-400 text-2xl" />
+          <div className="flex items-center justify-between text-center font-semibold text-orange-500">
+            <div className="flex gap-2">
+              <FaFan className="text-orange-500 text-xl" />
+              <p>Machine Fan</p> 
+            </div>
+            <p className="text-xl text-orange-500">{machineFanSpeed}</p>
+          </div>
+          <div className="flex items-center gap-3 pt-1">
             <input
               type="range"
               min="0"
               max="100"
               value={machineFanSpeed}
               onChange={handleMachinefan}
-              style={{ background: `linear-gradient(to right, yellow ${machineFanSpeed}%, #ddd ${machineFanSpeed}%)` }}
-              className="w-full appearance-none h-2 rounded-lg transition-all"
+              style={{ background: `linear-gradient(to right, orange ${machineFanSpeed}%, #ddd ${machineFanSpeed}%)` }}
+              className="w-full appearance-none h-3 rounded-lg transition-all"
             />
-            <p className="text-xl pr-1">{machineFanSpeed}</p>
+            
           </div>
         </div>
       </div>

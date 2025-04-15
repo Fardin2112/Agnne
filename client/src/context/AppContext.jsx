@@ -19,7 +19,8 @@ const AppContextProvider = (props) => {
   };
 
   // 📊 UI states for specific ESP32 stats
- 
+  
+  const [isRunning, setIsRunning] = useState(false); // is session running
 
   const [blueLight, setBlueLight] = useState(0);                  // Blue light intensity
   const [redLight, setRedLight] = useState(0);                    // Red light intensity
@@ -194,6 +195,8 @@ const AppContextProvider = (props) => {
 
     emergencyStop,setEmergencyStop,   // Errors
     overheatError, setOverheatError,
+
+    isRunning, setIsRunning , // session is runing
 
     espData,
     connected,
