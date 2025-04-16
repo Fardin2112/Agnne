@@ -132,7 +132,7 @@ function RightController() {
   // ========== UI ==========
   return (
     <div className="text-white flex flex-col items-center w-full h-full">
-      <p className={`${isDarkMode ? "text-white" : "text-black"} font-semibold text-lg`}>
+      <p className={`${isDarkMode ? "text-white" : "text-black"} font-semibold text-lg pt-2`}>
         Session Time
       </p>
 

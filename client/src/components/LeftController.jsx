@@ -147,7 +147,7 @@ const LeftController = () => {
 
       </div>
 
-      {/* below part  user and machine temp */}
+      {/* right part  user and machine temp */}
       <div className="flex flex-col w-full h-full pb-3 pt-3">
         {/* 🌡️ User Temp Control */}
         <div className="flex flex-col items-center">

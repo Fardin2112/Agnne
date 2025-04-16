@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { AppContext } from "../context/AppContext";
 
 function Setting() {
-  const { isDarkMode, toggleDarkMode , powerUsage } = useContext(AppContext);
+  const { isDarkMode, toggleDarkMode, powerUsage } = useContext(AppContext);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
 
   const toggleVoiceCommands = () => {
@@ -11,55 +11,58 @@ function Setting() {
   };
 
   return (
-    <div className={`h-full pt-12 ${isDarkMode ? 'bg-black : text-white' : 'bg-white text-black'}`}>
-      
-      {/* Dark Theme Section */}
-      <div className="mb-8">
-        <div className="space-y-4">
-          {/* Dark Mode Toggle */}
+    <div className={`min-h-screen pt-16 pb-8 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} flex flex-col items-center justify-start transition-colors duration-300`}>
+      {/* Header */}
+      <h1 className="text-2xl font-bold mb-8 tracking-wide">Settings</h1>
+
+      {/* Settings Container */}
+      <div className="w-full max-w-md space-y-6">
+        {/* Dark Mode Card */}
+        <div className={`p-6 rounded-xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} hover:bg-opacity-90 transition-all duration-200`}>
           <div className="flex items-center justify-between">
-            <span className="text-lg font-bold">Dark Mode</span>
+            <span className="text-lg font-semibold">Dark Mode</span>
             <button
               onClick={toggleDarkMode}
-              className={`w-12 h-6 rounded-full p-1 transition-colors ${
-                isDarkMode ? 'bg-blue-500' : 'bg-gray-300'
-              }`}
+              className={`relative w-12 h-6 rounded-full p-1 transition-colors duration-300 ${
+                isDarkMode ? 'bg-blue-600' : 'bg-gray-400'
+              } focus:outline-none`}
             >
-              <div
-                className={`bg-white rounded-full w-4 h-4 transform transition-transform ${
+              <span
+                className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transform transition-transform duration-300 ${
                   isDarkMode ? 'translate-x-6' : 'translate-x-0'
                 }`}
               />
             </button>
           </div>
+        </div>
 
-          {/* Voice Commands Toggle */}
+        {/* Voice Commands Card */}
+        <div className={`p-6 rounded-xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} hover:bg-opacity-90 transition-all duration-200`}>
           <div className="flex items-center justify-between">
-            <span className="text-lg font-bold">Voice Commands</span>
+            <span className="text-lg font-semibold">Voice Commands</span>
             <button
               onClick={toggleVoiceCommands}
-              className={`w-12 h-6 rounded-full p-1 transition-colors ${
-                voiceEnabled ? 'bg-green-500' : 'bg-gray-300'
-              }`}
+              className={`relative w-12 h-6 rounded-full p-1 transition-colors duration-300 ${
+                voiceEnabled ? 'bg-green-600' : 'bg-gray-400'
+              } focus:outline-none`}
             >
-              <div
-                className={`bg-white rounded-full w-4 h-4 transform transition-transform ${
+              <span
+                className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transform transition-transform duration-300 ${
                   voiceEnabled ? 'translate-x-6' : 'translate-x-0'
                 }`}
               />
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Power Consumption */}
-      <div className="mb-8">
-        <h2 className="text-lg font-bold mb-4">POWER CONSUMPTION</h2>
-        <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`}>
-          <span className="text-lg font-bold">{powerUsage}</span>
+        {/* Power Consumption Card */}
+        <div className={`p-6 rounded-xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} hover:bg-opacity-90 transition-all duration-200`}>
+          <h2 className="text-lg font-semibold mb-4">Power Consumption</h2>
+          <div className="text-2xl font-bold text-center">
+            {powerUsage} W
+          </div>
         </div>
       </div>
-    
     </div>
   );
 }
