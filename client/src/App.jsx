@@ -5,7 +5,7 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Setting from "./pages/Setting";
 import Stats from "./pages/Stats";
-import Sanitation from "./pages/Sanitation";
+import Sanitation from "./pages/Sanitation/Sanitation";
 import Shutdown from "./pages/Shutdown";
 import AgneeAnimation from "./components/AgneeAnimation";
 import { AppContext } from "./context/AppContext";

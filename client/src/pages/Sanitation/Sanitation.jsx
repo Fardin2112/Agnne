@@ -1,8 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
-import { AppContext } from "../context/AppContext";
 import { FaFan, FaPlus, FaMinus } from "react-icons/fa6";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import axios from "axios";
+import "./Sanitation.css"; // Import the CSS file
+import { AppContext } from "../../context/AppContext";
 
 function Sanitation() {
   const { isDarkMode } = useContext(AppContext);
@@ -115,7 +116,7 @@ function Sanitation() {
 
   return (
     <div
-      className={`pt-12 flex items-center justify-center transition-all duration-500 ${
+      className={`h-full flex items-center justify-center transition-all duration-500 ${
         isDarkMode ? "bg-gradient-to-br from-gray-900 to-black text-white" : "bg-gradient-to-br from-gray-100 to-white text-black"
       }`}
     >
@@ -221,32 +222,6 @@ function Sanitation() {
           )}
         </div>
       </div>
-
-      {/* Custom CSS for Animations */}
-      <style jsx>{`
-        @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-        @keyframes blink {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.3;
-          }
-        }
-        .animate-spin {
-          animation: spin 2s linear infinite;
-        }
-        .animate-blink {
-          animation: blink 1.5s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 }

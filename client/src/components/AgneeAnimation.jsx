@@ -52,7 +52,7 @@ const AgneeAnimation = () => {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="relative flex justify-center items-center h-[600px] w-full bg-gradient-to-br from-gray-900 to-black overflow-hidden"
+          className="relative flex justify-center items-center h-full w-full bg-gradient-to-br from-gray-900 to-black overflow-hidden"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}

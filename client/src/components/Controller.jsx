@@ -9,7 +9,7 @@ function Controller() {
            <LeftController/>
         </div>
         <div className='w-[50%]'>
-        <RightController/>
+           <RightController/>
         </div>
         
     </div>

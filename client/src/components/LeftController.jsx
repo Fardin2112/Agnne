@@ -172,7 +172,7 @@ const LeftController = () => {
             <TbTemperatureSnow className="text-2xl" />
             <p>User Temp</p>
             </div>
-          <div className={`flex gap-2 mt-2 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+          <div className={`flex gap-2 mt-2 `}>
             <button onClick={decreaseUserTemp} className="px-2 py-2 rounded">
               <FaMinus className="text-2xl"/>
             </button>

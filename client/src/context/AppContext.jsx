@@ -28,8 +28,8 @@ const AppContextProvider = (props) => {
   const [userTemp, setUserTemp] = useState(0);                   // Current user sensor temp
   const [machineTemp, setMachineTemp] = useState(0);             // Current machine sensor temp
 
-  const [maxUserTemp, setMaxUserTemp] = useState(0);             // Target user temp
-  const [maxMachineTemp, setMaxMachineTemp] = useState(0);       // Target machine temp
+  const [maxUserTemp, setMaxUserTemp] = useState(40);             // Target user temp
+  const [maxMachineTemp, setMaxMachineTemp] = useState(60);       // Target machine temp
 
   const [userFanSpeed, setUserFanSpeed] = useState(0);             // user fan value
   const [machineFanSpeed, setMachineFanSpeed] = useState(0);     // machine fan value
