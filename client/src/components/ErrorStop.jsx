@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
-import { AppContext } from '../context/AppContext'
+import { UserContext } from '../context/UserContext';
 
 function ErrorStop() {
-    const {emergencyStop} = useContext(AppContext);
+    const {emergencyStop} = useContext(UserContext);
   return (
     <div>ErrorStop</div>
   )

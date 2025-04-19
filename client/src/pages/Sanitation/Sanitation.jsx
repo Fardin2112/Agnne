@@ -3,10 +3,10 @@ import { FaFan, FaPlus, FaMinus } from "react-icons/fa6";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import axios from "axios";
 import "./Sanitation.css"; // Import the CSS file
-import { AppContext } from "../../context/AppContext";
+import { UserContext } from "../../context/UserContext";
 
 function Sanitation() {
-  const { isDarkMode } = useContext(AppContext);
+  const { isDarkMode } = useContext(UserContext);
   const [minutes, setMinutes] = useState(3);
   const [timeLeft, setTimeLeft] = useState(minutes * 60);
   const [sanitationMode, setSanitationMode] = useState(false);

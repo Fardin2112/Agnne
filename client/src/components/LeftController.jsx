@@ -1,9 +1,13 @@
-import React, { useContext } from "react";
-import { FaMinus, FaPlus } from "react-icons/fa6";
-import { AppContext } from "../context/AppContext";
+import React, { useContext, useState } from "react";
+import { FaMinus, FaPlus, FaFan } from "react-icons/fa6";
+import { UserContext } from "../context/UserContext";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import { TbTemperatureSnow } from "react-icons/tb";
 import axios from "axios";
+import { PiFanFill } from "react-icons/pi";
+import { HiLightBulb } from "react-icons/hi";
+import { LiaTemperatureLowSolid } from "react-icons/lia";
+import { IoReturnUpBackOutline } from "react-icons/io5";
 
 const LeftController = () => {
   const {
@@ -18,21 +22,27 @@ const LeftController = () => {
     setMaxUserTemp,
     maxMachineTemp,
     setMaxMachineTemp,
-    sendWsMessage, // ✅ From context
-  } = useContext(AppContext);
+    userFanSpeed,
+    setUserFanSpeed,
+    machineFanSpeed,
+    setMachineFanSpeed,
+    sendWsMessage,
+  } = useContext(UserContext);
+
+  const [activeSection, setActiveSection] = useState("light"); // Default to light
 
   // 🔵 Handle blue light slider change
   const handleBlueLightChange = (e) => {
     const newValue = Number(e.target.value);
-    setBlueLight(newValue); // update UI
-    sendWsMessage(`BLUE_INTENSITY=${newValue}`); // send to server
+    setBlueLight(newValue);
+    sendWsMessage(`BLUE_INTENSITY=${newValue}`);
   };
 
   // 🔴 Handle red light slider change
   const handleRedLightChange = (e) => {
     const newValue = Number(e.target.value);
-    setRedLight(newValue); // update UI
-    sendWsMessage(`RED_INTENSITY=${newValue}`); // send to server
+    setRedLight(newValue);
+    sendWsMessage(`RED_INTENSITY=${newValue}`);
   };
 
   // 🔼 Increase max user temp and sync with backend
@@ -83,140 +93,257 @@ const LeftController = () => {
     }
   };
 
+  // 🌬️ Send fan speed to server
+  const sendFanSpeed = async (type, value) => {
+    try {
+      await axios.post(`http://localhost:3000/api/device/fan/${type}`, { value });
+      console.log(`✅ Fan ${type} updated: ${value}`);
+    } catch (error) {
+      console.error(`❌ Fan ${type} update failed`, error);
+    }
+  };
+
+  // 🌬️ Handle user fan speed change
+  const handleUserfan = (e) => {
+    const value = Number(e.target.value);
+    setUserFanSpeed(value);
+    sendFanSpeed("user", value);
+  };
+
+  // 🌬️ Handle machine fan speed change
+  const handleMachinefan = (e) => {
+    const value = Number(e.target.value);
+    setMachineFanSpeed(value);
+    sendFanSpeed("machine", value);
+  };
+
   // Calculate percentage for circle progress
   const userTempPercentage = maxUserTemp === 0 ? 0 : (userTemp / maxUserTemp) * 100;
   const machineTempPercentage = maxMachineTemp === 0 ? 0 : (machineTemp / maxMachineTemp) * 100;
   const circumference = 376.99;
 
   return (
-    <div className="flex justify-center items-center h-full w-full">
-      <div className="flex w-[200px] h-full items-center pl-2 pt-10">
-        {/* 🔵 Blue Light Slider */}
-        <div className="flex flex-col w-[100px] h-full items-center">
-          
-          <div className="flex flex-col w-full h-full items-center">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={blueLight}
-              onChange={handleBlueLightChange}
-              style={{
-                background: `linear-gradient(to right, #3b82f6 ${blueLight}%, #e5e7eb ${blueLight}%)`,
-              }}
-              className="w-[350px] mt-44 h-5 appearance-none bg-gray-300 rounded-full outline-none transform -rotate-90 origin-center cursor-pointer
-                [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:bg-blue-400 [&::-webkit-slider-thumb]:rounded-full
-                [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer"
-            />
-          </div>
-          <div className="flex justify-between items-center w-full h-full px-5 pt-9 text-xl font-bold text-blue-500">
-            <div className="flex gap-1">
-            <HiOutlineLightBulb className="text-blue-400 text-2xl" />
-            {/* <p>Blue light</p> */}
-            </div>
-            <p>{blueLight}%</p>
-          </div>
-          
+    <div className="flex justify-center items-center h-full w-full ">
+      {/* Buttons */}
+      <div className="flex flex-col justify-between h-full w-20 bg-opacity-20">
+        <button className="px-3 py-2 text-4xl rounded-br-2xl bg-[#FFFFFF] shadow-md hover:bg-gray-100 hover:scale-105">
+          <IoReturnUpBackOutline />
+        </button>
+        <div className="flex flex-col bg-white rounded-r-full py-10 shadow-md">
+          <button
+            onClick={() => setActiveSection("fan")}
+            className={`p-3 rounded-tr-3xl transition-colors ${
+              activeSection === "fan" ? "bg-gray-100 shadow-md" : "hover:bg-gray-100 hover:rounded-tr-3xl hover:scale-110"
+            }`}
+          >
+            <PiFanFill className={`text-5xl text-[#000000]/70 ${activeSection === "fan" ? "text-[#000000]" : ""}`} />
+          </button>
+          <button
+            onClick={() => setActiveSection("light")}
+            className={`p-3 rounded-lg transition-colors ${
+              activeSection === "light" ? "bg-gray-100 shadow-md" : "hover:bg-gray-100 hover:scale-110"
+            }`}
+          >
+            <HiLightBulb className="text-5xl text-[#000000]/70" />
+          </button>
+          <button
+            onClick={() => setActiveSection("temp")}
+            className={`p-3 rounded-br-3xl transition-colors ${
+              activeSection === "temp" ? "bg-gray-100" : "hover:bg-gray-100 hover:rounded-br-3xl hover:scale-110"
+            }`}
+          >
+            <LiaTemperatureLowSolid className="text-5xl text-[#000000]/70" />
+          </button>
         </div>
-
-        {/* 🔴 Red Light Slider */}
-        <div className="flex flex-col w-[100px] h-full items-center">
-          <div className="flex flex-col h-full w-full items-center">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={redLight}
-              onChange={handleRedLightChange}   
-              style={{
-                background: `linear-gradient(to right, #ef4444 ${redLight}%, #e5e7eb ${redLight}%)`,
-              }}
-              className="w-[350px] mt-44 h-5 appearance-none bg-gray-300 rounded-full outline-none transform -rotate-90 origin-center cursor-pointer
-                [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:bg-red-400 [&::-webkit-slider-thumb]:rounded-full
-                [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer"
-            />
-          </div>
-          <div className="flex justify-between items-center w-full h-full px-5 pt-9 text-xl font-bold text-red-500">
-          <div className="flex gap-2">
-          <HiOutlineLightBulb className="text-red-400 text-2xl" />
-          {/* <p>Red light</p> */}
-          </div>   
-            <p>{redLight}%</p>
-          </div>
-        </div>
-
+        <div></div>
       </div>
 
-      {/* right part  user and machine temp */}
-      <div className="flex flex-col w-full h-full pb-3 pt-3">
-        {/* 🌡️ User Temp Control */}
-        <div className="flex flex-col items-center">
-          <div className="w-32 h-32 relative flex items-center justify-center">
-            <svg className="absolute w-full h-full" viewBox="0 0 128 128">
-              <circle cx="64" cy="64" r="60" fill="none" stroke="#e5e7eb" strokeWidth="8" />
-              <circle
-                cx="64"
-                cy="64"
-                r="60"
-                fill="none"
-                stroke="green"
-                strokeWidth="8"
-                strokeDasharray={circumference}
-                strokeDashoffset={circumference - (userTempPercentage / 100) * circumference}
-                transform="rotate(-90 64 64)"
+      {/* Content Area */}
+      <div className="ml-6 flex-1">
+        {activeSection === "fan" && (
+          <div className="flex w-[500px] h-[450px] items-center justify-center bg-white rounded-lg shadow-md">
+            {/* 🌬️ User Fan Slider */}
+            <div className="flex w-[250px] flex-col items-center justify-center h-full">
+              <p className="text-[#22c55e] font-semibold">User Fan</p>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={userFanSpeed}
+                onChange={handleUserfan}
+                className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
+                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
+                  [&::-webkit-slider-thumb]:bg-[#4ade80] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
+                  [&::-webkit-slider-thumb]:hover:bg-[#22c55e] [&::-webkit-slider-thumb]:transition-colors
+                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#4ade80]
+                  [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#22c55e]
+                  [&::-moz-range-thumb]:transition-colors"
+                style={{
+                  background: `linear-gradient(to right, #22c55e ${userFanSpeed}%, #e5e7eb ${userFanSpeed}%)`,
+                }}
               />
-            </svg>
-            <p className="text-xl font-bold text-green-500 z-10">{userTemp}°C</p>
-          </div>
-          <div className="flex items-center  gap-2 mt-2 text-green-500 font-bold">
-            <TbTemperatureSnow className="text-2xl" />
-            <p>User Temp</p>
+              <div className="mt-40 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#22c55e]">
+                <FaFan className="text-[#22c55e] text-3xl" />
+                <span className="pr-5">{userFanSpeed}%</span>
+              </div>
             </div>
-          <div className={`flex gap-2 mt-2 `}>
-            <button onClick={decreaseUserTemp} className="px-2 py-2 rounded">
-              <FaMinus className="text-2xl"/>
-            </button>
-            <p className="px-2 py-2 text-xl">{maxUserTemp}</p>
-            <button onClick={increaseUserTemp} className="px-2 py-2 rounded">
-              <FaPlus className="text-2xl"/>
-            </button>
-          </div>
-        </div>
 
-        {/* ⚙️ Machine Temp Control */}
-        <div className="flex flex-col items-center pt-3">
-          <div className="w-32 h-32 relative flex items-center justify-center">
-            <svg className="absolute w-full h-full" viewBox="0 0 128 128">
-              <circle cx="64" cy="64" r="60" fill="none" stroke="#e5e7eb" strokeWidth="8" />
-              <circle
-                cx="64"
-                cy="64"
-                r="60"
-                fill="none"
-                stroke="orange"
-                strokeWidth="8"
-                strokeDasharray={circumference}
-                strokeDashoffset={circumference - (machineTempPercentage / 100) * circumference}
-                transform="rotate(-90 64 64)"
+            {/* 🌬️ Machine Fan Slider */}
+            <div className="flex w-[250px] flex-col items-center justify-center h-full">
+              <p className="text-[#f97316] font-semibold">Machine Fan</p>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={machineFanSpeed}
+                onChange={handleMachinefan}
+                className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
+                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
+                  [&::-webkit-slider-thumb]:bg-[#fb923c] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
+                  [&::-webkit-slider-thumb]:hover:bg-[#f97316] [&::-webkit-slider-thumb]:transition-colors
+                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#fb923c]
+                  [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#f97316]
+                  [&::-moz-range-thumb]:transition-colors"
+                style={{
+                  background: `linear-gradient(to right, #f97316 ${machineFanSpeed}%, #e5e7eb ${machineFanSpeed}%)`,
+                }}
               />
-            </svg>
-            <p className="text-xl font-bold text-orange-500 z-10">{machineTemp}°C</p>
-          </div>
-          <div className="flex items-center gap-2 mt-2 text-orange-500 font-bold">
-          <TbTemperatureSnow className="text-2xl" />
-            <p>Machine Temp</p>
+              <div className="mt-40 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#f97316]">
+                <FaFan className="text-[#f97316] text-3xl" />
+                <span className="pr-5">{machineFanSpeed}%</span>
+              </div>
             </div>
-          <div className={`flex gap-2 mt-2 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-            <button onClick={decreaseMachineTemp} className="px-2 py-2 rounded">
-              <FaMinus className="text-2xl"/>
-            </button>
-            <p className="px-2 py-2 text-xl">{maxMachineTemp}</p>
-            <button onClick={increaseMachineTemp} className="px-2 py-2 rounded">
-              <FaPlus className="text-2xl"/>
-            </button>
           </div>
-        </div>
-        </div>
+        )}
+
+        {activeSection === "light" && (
+          <div className="flex w-[500px] h-[450px] items-center justify-center bg-white rounded-lg shadow-md">
+            {/* 🔵 Blue Light Slider */}
+            <div className="flex w-[250px] flex-col items-center justify-center h-full">
+              <p className="text-[#8291ff] font-semibold">Blue Light</p>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={blueLight}
+                onChange={handleBlueLightChange}
+                className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
+                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
+                  [&::-webkit-slider-thumb]:bg-[#a6bbff] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
+                  [&::-webkit-slider-thumb]:hover:bg-[#8291ff] [&::-webkit-slider-thumb]:transition-colors
+                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#a6bbff]
+                  [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#8291ff]
+                  [&::-moz-range-thumb]:transition-colors"
+                style={{
+                  background: `linear-gradient(to right, #8291ff ${blueLight}%, #e5e7eb ${blueLight}%)`,
+                }}
+              />
+              <div className="mt-40 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#8291ff]">
+                <HiOutlineLightBulb className="text-[#8291ff] text-3xl" />
+                <span className="pr-5">{blueLight}%</span>
+              </div>
+            </div>
+
+            {/* 🔴 Red Light Slider */}
+            <div className="flex w-[250px] flex-col items-center text-[#ff6663] justify-center h-full">
+              <p className="font-semibold">Red Light</p>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={redLight}
+                onChange={handleRedLightChange}
+                className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
+                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
+                  [&::-webkit-slider-thumb]:bg-[#ff8282] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
+                  [&::-webkit-slider-thumb]:hover:bg-[#ff6663] [&::-webkit-slider-thumb]:transition-colors
+                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#ff8282]
+                  [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#ff6663]
+                  [&::-moz-range-thumb]:transition-colors"
+                style={{
+                  background: `linear-gradient(to right, #ff6663 ${redLight}%, #e5e7eb ${redLight}%)`,
+                }}
+              />
+              <div className="mt-40 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#ff6663]">
+                <HiOutlineLightBulb className="text-[#ff6663] text-3xl" />
+                <span className="pr-5">{redLight}%</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === "temp" && (
+          <div className="flex flex-col w-[500px] h-[450px] bg-white rounded-lg shadow-md p-6">
+            {/* 🌡️ User Temp Control */}
+            <div className="flex flex-col items-center">
+              <div className="w-32 h-32 relative flex items-center justify-center">
+                <svg className="absolute w-full h-full" viewBox="0 0 128 128">
+                  <circle cx="64" cy="64" r="60" fill="none" stroke="#e5e7eb" strokeWidth="8" />
+                  <circle
+                    cx="64"
+                    cy="64"
+                    r="60"
+                    fill="none"
+                    stroke="green"
+                    strokeWidth="8"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={circumference - (userTempPercentage / 100) * circumference}
+                    transform="rotate(-90 64 64)"
+                  />
+                </svg>
+                <p className="text-xl font-bold text-green-500 z-10">{userTemp}°C</p>
+              </div>
+              <div className="flex items-center gap-2 mt-2 text-green-500 font-bold">
+                <TbTemperatureSnow className="text-2xl" />
+                <p>User Temp</p>
+              </div>
+              <div className="flex gap-2 mt-2">
+                <button onClick={decreaseUserTemp} className="px-2 py-2 rounded">
+                  <FaMinus className="text-2xl" />
+                </button>
+                <p className="px-2 py-2 text-xl">{maxUserTemp}</p>
+                <button onClick={increaseUserTemp} className="px-2 py-2 rounded">
+                  <FaPlus className="text-2xl" />
+                </button>
+              </div>
+            </div>
+
+            {/* ⚙️ Machine Temp Control */}
+            <div className="flex flex-col items-center pt-3">
+              <div className="w-32 h-32 relative flex items-center justify-center">
+                <svg className="absolute w-full h-full" viewBox="0 0 128 128">
+                  <circle cx="64" cy="64" r="60" fill="none" stroke="#e5e7eb" strokeWidth="8" />
+                  <circle
+                    cx="64"
+                    cy="64"
+                    r="60"
+                    fill="none"
+                    stroke="orange"
+                    strokeWidth="8"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={circumference - (machineTempPercentage / 100) * circumference}
+                    transform="rotate(-90 64 64)"
+                  />
+                </svg>
+                <p className="text-xl font-bold text-orange-500 z-10">{machineTemp}°C</p>
+              </div>
+              <div className="flex items-center gap-2 mt-2 text-orange-500 font-bold">
+                <TbTemperatureSnow className="text-2xl" />
+                <p>Machine Temp</p>
+              </div>
+              <div className="flex gap-2 mt-2">
+                <button onClick={decreaseMachineTemp} className="px-2 py-2 rounded">
+                  <FaMinus className="text-2xl" />
+                </button>
+                <p className="px-2 py-2 text-xl">{maxMachineTemp}</p>
+                <button onClick={increaseMachineTemp} className="px-2 py-2 rounded">
+                  <FaPlus className="text-2xl" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

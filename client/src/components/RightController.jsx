@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
-import { FaPlay, FaPause, FaFan, FaStop, FaMinus, FaPlus } from "react-icons/fa6";
-import { AppContext } from "../context/AppContext";
+import { FaPlay, FaPause, FaStop, FaMinus, FaPlus } from "react-icons/fa6";
+import { UserContext } from "../context/UserContext";
 
 function RightController() {
-  const { isDarkMode, userFanSpeed,machineFanSpeed, setUserFanSpeed, setMachineFanSpeed,isRunning, setIsRunning } = useContext(AppContext);
+  const { isDarkMode, isRunning, setIsRunning } = useContext(UserContext);
 
   const [sessionTime, setSessionTime] = useState(15);
   const [timeLeft, setTimeLeft] = useState(sessionTime * 60);
-  
-  
+
   const timerRef = useRef(null); // 🧠 Stores the timer id
 
   const isInitialState = timeLeft === sessionTime * 60;
@@ -77,15 +76,6 @@ function RightController() {
     }
   };
 
-  const sendFanSpeed = async (type, value) => {
-    try {
-      await axios.post(`http://localhost:3000/api/device/fan/${type}`, { value });
-      console.log(`✅ Fan ${type} updated: ${value}`);
-    } catch (error) {
-      console.error(`❌ Fan ${type} update failed`, error);
-    }
-  };
-
   // ========== Event Handlers ==========
   const handleResume = async () => {
     try {
@@ -117,138 +107,122 @@ function RightController() {
   const handleIncreaseTimeChange = () => setSessionTime((prev) => Math.min(60, prev + 1));
   const handleDecreaseTimeChange = () => setSessionTime((prev) => Math.max(1, prev - 1));
 
-  const handleUserfan = (e) => {
-    const value = Number(e.target.value);
-    setUserFanSpeed(value);
-    sendFanSpeed("user", value);
-  };
-
-  const handleMachinefan = (e) => {
-    const value = Number(e.target.value);
-    setMachineFanSpeed(value);
-    sendFanSpeed("machine", value);
+  // Dynamic stroke color for timer based on timeLeft
+  const getTimerStrokeColor = () => {
+    const percentage = (timeLeft / (sessionTime * 60)) * 100;
+    if (percentage > 50) return "#00C2FF"; // ocen for >50%
+    if (percentage > 20) return "#f59e0b"; // Yellow for 20-50%
+    return "#ef4444"; // Red for <20%
   };
 
   // ========== UI ==========
   return (
-    <div className="text-white flex flex-col items-center w-full h-full">
-      <p className={`${isDarkMode ? "text-white" : "text-black"} font-semibold text-lg pt-2`}>
-        Session Time
-      </p>
+    <div className="flex flex-col items-center justify-center w-full h-full">
+      {/* Timer Section */}
+      <div className="bg-white w-[90%] h-[450px] flex flex-col items-center shadow-md rounded-lg p-6">
+        <p className={`font-semibold text-lg ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+          Session Time
+        </p>
 
-      {/* Timer Circle */}
-      <div className="relative flex flex-col items-center">
-        <svg width="180" height="180" viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r="50" fill="transparent" stroke="gray" strokeWidth="10" />
-          <circle
-            cx="60"
-            cy="60"
-            r="50"
-            fill="transparent"
-            stroke="purple"
-            strokeWidth="7"
-            strokeDasharray="314"
-            strokeDashoffset={314 - (timeLeft / (sessionTime * 60)) * 314}
-            strokeLinecap="round"
-            transform="rotate(-90 60 60)"
-          />
-        </svg>
-        <span className={`${isDarkMode ? "text-white" : "text-black"} absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold`}>
-          {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
-        </span>
-      </div>
-
-      {/* Time Controls */}
-      <div className="flex gap-4">
-        <button onClick={handleDecreaseTimeChange} className={`px-3 py-1 text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-          <FaMinus className="text-2xl"/>
-        </button>
-        <button onClick={handleIncreaseTimeChange} className={`px-3 text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-          <FaPlus className="text-2xl"/>
-        </button>
-      </div>
-
-      {/* Control Buttons */}
-      <div className="mt-1 flex gap-3 font-semibold">
-        {isRunning ? (
-          <>
-            <button onClick={handlePause} className="px-6 py-2 rounded-full flex items-center gap-2 bg-yellow-500">
-              <FaPause />
-              Pause
-            </button>
-            <button onClick={handleStop} className="px-6 py-2 rounded-full flex items-center gap-2 bg-red-500">
-              <FaStop />
-              Stop
-            </button>
-          </>
-        ) : (
-          <>
-            {isInitialState ? (
-              <button onClick={handleStart} className="px-6 py-2 rounded-full flex items-center gap-2 bg-green-500">
-                <FaPlay />
-                Start
-              </button>
-            ) : (
-              <>
-                <button onClick={handleResume} className="px-6 py-2 rounded-full flex items-center gap-2 bg-green-500">
-                  <FaPlay />
-                  Resume
-                </button>
-                <button onClick={handleStop} className="px-6 py-2 rounded-full flex items-center gap-2 bg-red-500">
-                  <FaStop />
-                  Stop
-                </button>
-              </>
-            )}
-          </>
-        )}
-      </div>
-
-      {/* Fan Sliders */}
-      <div className="w-full mt-6 space-y-7 pr-5">
-        {/* User Fan */}
-        <div className="w-full">
-        <div className="flex items-center justify-between text-center font-semibold text-green-500">
-            <div className="flex gap-2">
-              <FaFan className="text-xl" />
-              <p>User Fan</p> 
-            </div>
-            <p className="text-xl">{userFanSpeed}</p>
-          </div>
-          <div className="flex items-center gap-3 ">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={userFanSpeed}
-              onChange={handleUserfan}
-              style={{ background: `linear-gradient(to right, green ${userFanSpeed}%, #ddd ${userFanSpeed}%)` }}
-              className="w-full appearance-none h-3 rounded-lg transition-all"
+        {/* Timer Circle */}
+        <div className="relative flex flex-col items-center mt-6">
+          <svg width="180" height="180" viewBox="0 0 120 120">
+            <circle
+              cx="60"
+              cy="60"
+              r="50"
+              fill="transparent"
+              stroke="#e5e7eb" // Static gray background
+              strokeWidth="7"
             />
-          </div>
+            <circle
+              cx="60"
+              cy="60"
+              r="50"
+              fill="transparent"
+              stroke={getTimerStrokeColor()} // Dynamic stroke color
+              strokeWidth="3"
+              strokeDasharray="314"
+              strokeDashoffset={314 - (timeLeft / (sessionTime * 60)) * 314}
+              strokeLinecap="round"
+              transform="rotate(-90 60 60)"
+            />
+          </svg>
+          <span
+            className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold rounded-full${
+              isDarkMode ? "text-white" : "text-gray-700"
+            }`}
+          >
+            {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
+          </span>
         </div>
 
-        {/* Machine Fan */}
-        <div className="w-full">
-          <div className="flex items-center justify-between text-center font-semibold text-orange-500">
-            <div className="flex gap-2">
-              <FaFan className="text-orange-500 text-xl" />
-              <p>Machine Fan</p> 
+        {/* Time Controls */}
+        <div className="flex justify-between mt-[-8px] w-[190px]">
+          <button
+            onClick={handleDecreaseTimeChange}
+            className={`p-2 rounded-full border-1 border-[#00C2FF] shadow-md text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-700"}`}
+          >
+            <FaMinus className="text-2xl text-[#00C2FF]" />
+          </button>
+          <button
+            onClick={handleIncreaseTimeChange}
+            className={`p-2 rounded-full border-1 border-[#00C2FF] shadow-md text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-700"}`}
+          >
+            <FaPlus className="text-2xl text-[#00C2FF]" />
+          </button>
+        </div>
+
+        {/* Control Buttons */}
+        <div className="mt-6 flex gap-3 font-semibold">
+          {isRunning ? (
+            <div className="flex items-center w-[100px] justify-evenly px-2 py-2 border-1 text-[#00C2FF] border-[#00C2FF] shadow-md text-xl font-bold rounded-4xl">
+              <button
+                onClick={handlePause}
+                className=""
+              >
+                <FaPause />
+                
+              </button>
+              <button
+                onClick={handleStop}
+                className=""
+              >
+                <FaStop />
+                
+              </button>
             </div>
-            <p className="text-xl text-orange-500">{machineFanSpeed}</p>
-          </div>
-          <div className="flex items-center gap-3 pt-1">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={machineFanSpeed}
-              onChange={handleMachinefan}
-              style={{ background: `linear-gradient(to right, orange ${machineFanSpeed}%, #ddd ${machineFanSpeed}%)` }}
-              className="w-full appearance-none h-3 rounded-lg transition-all"
-            />
-            
-          </div>
+          ) : (
+            <>
+              {isInitialState ? (
+                <button
+                  onClick={handleStart}
+                  className="p-2 rounded-full border-1 text-[#00C2FF] border-[#00C2FF] shadow-md text-xl font-bold"
+                >
+                  <FaPlay />
+                  
+                </button>
+              ) : (
+                <div className="flex items-center w-[100px] justify-evenly px-2 py-2 border-1 text-[#00C2FF] border-[#00C2FF] shadow-md text-xl font-bold rounded-4xl">
+                
+                  <button
+                    onClick={handleResume}
+                    className=""
+                  >
+                    <FaPlay />
+                    
+                  </button>
+                  <button
+                    onClick={handleStop}
+                    className=""
+                  >
+                    <FaStop />
+                   
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>

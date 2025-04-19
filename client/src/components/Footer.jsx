@@ -1,15 +1,19 @@
 import React, { useContext, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FaChartBar, FaDroplet, FaPowerOff } from "react-icons/fa6";
 import { TiHome } from "react-icons/ti";
 import { FaCog } from "react-icons/fa";
-import { AppContext } from "../context/AppContext";
 import { motion, AnimatePresence } from "framer-motion"; // For 3D animations
 import { assests } from "../assets/assests";
+import { UserContext } from "../context/UserContext";
+import { AppContext } from "../context/AppContext";
 
 function Footer() {
-  const { isDarkMode } = useContext(AppContext);
+  const { toggleHome,setToggleHome } = useContext(AppContext);
+  const { isDarkMode } = useContext(UserContext);
   const [showPopup, setShowPopup] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate(); // To programmatically navigate
 
   const handleShutdown = () => {
     console.log("Shutting down...");
@@ -20,40 +24,45 @@ function Footer() {
   // Animation variants for the popup
   const popupVariants = {
     hidden: { opacity: 0, scale: 0.8, y: 50, rotateX: -15 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
-      y: 0, 
-      rotateX: 0, 
-      transition: { 
-        type: "spring", 
-        stiffness: 100, 
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      rotateX: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
         damping: 15,
-        duration: 0.5 
-      } 
+        duration: 0.5,
+      },
     },
-    exit: { 
-      opacity: 0, 
-      scale: 0.8, 
-      y: 50, 
+    exit: {
+      opacity: 0,
+      scale: 0.8,
+      y: 50,
       rotateX: 15,
-      transition: { duration: 0.3 }
+      transition: { duration: 0.3 },
     },
   };
 
   // Animation variants for the shutdown icon
   const iconVariants = {
     hidden: { opacity: 0, scale: 0 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
-      transition: { 
-        delay: 0.2, 
-        type: "spring", 
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delay: 0.2,
+        type: "spring",
         stiffness: 120,
-        damping: 10 
-      } 
+        damping: 10,
+      },
     },
+  };
+
+  // Function to navigate to "Deep Research"
+  const navigateToResearch = () => {
+    navigate("/"); // Replace with the correct route
   };
 
   return (
@@ -61,32 +70,42 @@ function Footer() {
       {/* Footer */}
       <motion.div
         className={`h-[70px] flex justify-around items-center fixed bottom-0 left-0 w-full z-50 bg-opacity-90 backdrop-blur-md border-t border-opacity-20 shadow-[0_4px_15px_rgba(0,0,0,0.3)] perspective-1000 ${
-          isDarkMode 
+          isDarkMode
             ? "bg-gradient-to-r from-gray-900 via-gray-800 to-black border-gray-700 text-white"
-            : "bg-gradient-to-r from-gray-100 via-gray-200 to-white border-gray-300 text-gray-900"
+            : "bg-[#FAFAFA] border-[#F1F3F4] text-gray-900"
         }`}
         style={{ transformStyle: "preserve-3d" }}
         initial={{ y: 50, rotateX: 15 }}
         animate={{ y: 0, rotateX: 0 }}
         transition={{ type: "spring", stiffness: 80, damping: 12 }}
       >
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            `flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 ${
-              isActive ? "text-blue-500" : isDarkMode ? "text-gray-300" : "text-gray-700"
-            }`
-          }
-        >
-          <TiHome size={24} className="mb-1" />
-          <span className="text-xs font-semibold">Home</span>
-        </NavLink>
+        {/* Home Button - Conditionally Rendered */}
+        {location.pathname === "/" ? (
+          <button
+            onClick={() => {
+              setToggleHome(true);
+              // Add any additional logic you want when the home button is clicked
+            }}
+            className="flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 text-blue-500"
+          >
+            <TiHome size={24} className="mb-1" />
+            <span className="text-xs font-semibold">Start</span>
+          </button>
+        ) : (
+          <button
+            onClick={navigateToResearch} // Navigate to Deep Research
+            className="flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 text-blue-500"
+          >
+            <TiHome size={24} className="mb-1" />
+            <span className="text-xs font-semibold">Home</span>
+          </button>
+        )}
 
         <NavLink
           to="/settings"
           className={({ isActive }) =>
             `flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 ${
-              isActive ? "text-blue-500" : isDarkMode ? "text-gray-300" : "text-gray-700"
+              isActive ? "text-blue-500" : isDarkMode ? "text-gray-300" : "text-[#2B2E48]"
             }`
           }
         >
@@ -98,7 +117,7 @@ function Footer() {
           to="/stats"
           className={({ isActive }) =>
             `flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 ${
-              isActive ? "text-blue-500" : isDarkMode ? "text-gray-300" : "text-gray-700"
+              isActive ? "text-blue-500" : isDarkMode ? "text-gray-300" : "text-[#2B2E48]"
             }`
           }
         >
@@ -110,7 +129,7 @@ function Footer() {
           to="/sanitation"
           className={({ isActive }) =>
             `flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 ${
-              isActive ? "text-blue-500" : isDarkMode ? "text-gray-300" : "text-gray-700"
+              isActive ? "text-blue-500" : isDarkMode ? "text-gray-300" : "text-[#2B2E48]"
             }`
           }
         >
@@ -138,7 +157,7 @@ function Footer() {
           >
             <motion.div
               className={`p-6 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-opacity-95 backdrop-blur-md w-[90%] max-w-md ${
-                isDarkMode 
+                isDarkMode
                   ? "bg-gradient-to-br from-gray-800 to-black text-white"
                   : "bg-gradient-to-br from-white to-gray-100 text-black"
               }`}
@@ -148,7 +167,7 @@ function Footer() {
               exit="exit"
             >
               <div className="text-center mb-6">
-              <motion.img
+                <motion.img
                   src={assests.shutdown}
                   alt="Shutdown"
                   className="mx-auto mb-4 w-20 h-20"

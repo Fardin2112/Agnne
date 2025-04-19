@@ -8,11 +8,13 @@ import Stats from "./pages/Stats";
 import Sanitation from "./pages/Sanitation/Sanitation";
 import Shutdown from "./pages/Shutdown";
 import AgneeAnimation from "./components/AgneeAnimation";
+import { UserContext } from "./context/UserContext";
 import { AppContext } from "./context/AppContext";
 
 function App() {
   const [showAnimation, setShowAnimation] = useState(true);
-  const { isDarkMode } = useContext(AppContext);
+  const { isDarkMode } = useContext(UserContext);
+  const { toggleHome } = useContext(AppContext);
 
   useEffect(() => {
     setTimeout(() => setShowAnimation(false), 4000); // Hide animation after 4s
@@ -21,7 +23,9 @@ function App() {
   return (
     <div
       className={`h-screen w-screen flex flex-col ${
-        isDarkMode ? "bg-gradient-to-br from-gray-900 to-black text-white" : "bg-gradient-to-br from-gray-100 to-white text-black"
+        isDarkMode
+          ? "bg-gradient-to-br from-gray-800 to-black text-white"
+          : "bg-white text-black"
       }`}
     >
       {showAnimation ? (
@@ -30,10 +34,14 @@ function App() {
         </div>
       ) : (
         <>
-          <div className="h-[10%] flex-shrink-0">
-            <Navbar />
-          </div>
-          <div className="flex-grow overflow-auto min-h-0 px-2">
+          {/* Only show Navbar if toggleHome is false */}
+          {!toggleHome && (
+            <div className="h-[10%] flex-shrink-0">
+              <Navbar />
+            </div>
+          )}
+
+          <div className="flex-grow overflow-auto min-h-0">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/settings" element={<Setting />} />
@@ -42,13 +50,18 @@ function App() {
               <Route path="/shutdown" element={<Shutdown />} />
             </Routes>
           </div>
-          <div className="flex-shrink-0">
-            <Footer />
-          </div>
+
+          {/* Only show Footer if toggleHome is false */}
+          {!toggleHome && (
+            <div className="flex-shrink-0">
+              <Footer />
+            </div>
+          )}
         </>
       )}
     </div>
   );
 }
+
 
 export default App;

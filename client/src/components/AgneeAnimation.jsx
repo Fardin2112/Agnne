@@ -9,7 +9,7 @@ const AgneeAnimation = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 5500);
+    }, 500);
     return () => clearTimeout(timer);
   }, []);
 

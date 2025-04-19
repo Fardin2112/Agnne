@@ -1,10 +1,17 @@
+// tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 export default {
-    darkMode: "class", // Enables manual dark mode switching
-    content: ["./src/**/*.{js,jsx,ts,tsx}"],
-    theme: {
-      extend: {},
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  theme: {
+    extend: {
+      fontFamily: {
+        inter: ['"Inter"', 'sans-serif'],
+        roboto: ['"Roboto"', 'sans-serif'],
+        outfit: ['"Outfit"', 'sans-serif'],
+        playfair: ['"Playfair Display"', 'serif'],
+        anurati: ['"Anurati"', 'sans-serif'],
+      },
     },
-    plugins: [],
-  };
-  
+  },
+  plugins: [],
+};

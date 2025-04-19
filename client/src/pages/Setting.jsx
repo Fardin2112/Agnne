@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { AppContext } from "../context/AppContext";
+import { UserContext } from '../context/UserContext';
 
 function Setting() {
-  const { isDarkMode, toggleDarkMode, powerUsage } = useContext(AppContext);
+  const { isDarkMode, toggleDarkMode, powerUsage } = useContext(UserContext);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
 
   const toggleVoiceCommands = () => {

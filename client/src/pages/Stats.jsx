@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { AppContext } from '../context/AppContext';
+import { UserContext } from '../context/UserContext';
 
 function Stats() {
-  const { isDarkMode, totalSession, totalRunningHours, powerUsage } = useContext(AppContext);
+  const { isDarkMode, totalSession, totalRunningHours, powerUsage } = useContext(UserContext);
 
   const handleClick = async () => {
     console.log("Refresh state is : on work processing");

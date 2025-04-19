@@ -54,8 +54,20 @@ let currentState = {
   POWER_USAGE: 28.9,
   WEEKLY_SESSIONS: 5,
   WEEKLY_POWER: 11.3,
-  HARDWARE_STATUS: "Not Detected"
-};
+  HARDWARE_STATUS: "Not Detected",
+  TEMP_ENV : 35,
+  TARGET_USER_TEMP : 50, 
+  TARGET_MACHINE_TEMP : 60,
+  SET_BLUE_INTENSITY : 34,
+  SET_RED_INTENSITY : 36,
+  SESSION_STATUS : "Paused",
+  SANITATION_TIME : 0,
+  SANITATION_STATUS : "Stoped",
+
+  // errors Additional messages
+  
+
+}
 
 // =======================
 // ESP32 Serial Setup
