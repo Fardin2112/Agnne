@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { HiArrowRightStartOnRectangle } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
+import { assests } from "../assets/assests";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -69,9 +70,9 @@ function LandingPage() {
         </div>
         <img
           ref={imageRef}
-          src="https://wallpapers.com/images/hd/hospital-mri-machine-png-10-4yuszj07pxl04xwx.jpg"
-          alt="3D Landing"
-          className="w-[350px] h-[350px] object-cover transition-transform duration-200 ease-in-out"
+          src={assests.AgneeImg}
+          alt="Agnee image"
+          className="w-[600px] h-[200px] object-cover transition-transform duration-200 ease-in-out"
         />
       </div>
     </div>

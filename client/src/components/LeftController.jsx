@@ -8,6 +8,7 @@ import { PiFanFill } from "react-icons/pi";
 import { HiLightBulb } from "react-icons/hi";
 import { LiaTemperatureLowSolid } from "react-icons/lia";
 import { IoReturnUpBackOutline } from "react-icons/io5";
+import { AppContext } from "../context/AppContext";
 
 const LeftController = () => {
   const {
@@ -29,7 +30,8 @@ const LeftController = () => {
     sendWsMessage,
   } = useContext(UserContext);
 
-  const [activeSection, setActiveSection] = useState("light"); // Default to light
+    const { toggleHome,setToggleHome } = useContext(AppContext);
+    const [activeSection, setActiveSection] = useState("light"); // Default to light
 
   // 🔵 Handle blue light slider change
   const handleBlueLightChange = (e) => {
@@ -126,7 +128,7 @@ const LeftController = () => {
     <div className="flex justify-center items-center h-full w-full ">
       {/* Buttons */}
       <div className="flex flex-col justify-between h-full w-20 bg-opacity-20">
-        <button className="px-3 py-2 text-4xl rounded-br-2xl bg-[#FFFFFF] shadow-md hover:bg-gray-100 hover:scale-105">
+        <button onClick={()=>setToggleHome(false)} className="px-3 py-2 text-4xl rounded-br-2xl bg-[#FFFFFF] shadow-md hover:bg-gray-100 hover:scale-105">
           <IoReturnUpBackOutline />
         </button>
         <div className="flex flex-col bg-white rounded-r-full py-10 shadow-md">
@@ -173,9 +175,9 @@ const LeftController = () => {
                 onChange={handleUserfan}
                 className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
-                  [&::-webkit-slider-thumb]:bg-[#4ade80] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
+                  [&::-webkit-slider-thumb]:bg-[#22c55e] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
                   [&::-webkit-slider-thumb]:hover:bg-[#22c55e] [&::-webkit-slider-thumb]:transition-colors
-                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#4ade80]
+                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#22c55e]
                   [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#22c55e]
                   [&::-moz-range-thumb]:transition-colors"
                 style={{
@@ -190,7 +192,7 @@ const LeftController = () => {
 
             {/* 🌬️ Machine Fan Slider */}
             <div className="flex w-[250px] flex-col items-center justify-center h-full">
-              <p className="text-[#f97316] font-semibold">Machine Fan</p>
+              <p className="text-[#ffa500] font-semibold">Machine Fan</p>
               <input
                 type="range"
                 min="0"
@@ -199,17 +201,17 @@ const LeftController = () => {
                 onChange={handleMachinefan}
                 className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
-                  [&::-webkit-slider-thumb]:bg-[#fb923c] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
-                  [&::-webkit-slider-thumb]:hover:bg-[#f97316] [&::-webkit-slider-thumb]:transition-colors
-                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#fb923c]
-                  [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#f97316]
+                  [&::-webkit-slider-thumb]:bg-[#ffa500] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
+                  [&::-webkit-slider-thumb]:hover:bg-[#ffa500] [&::-webkit-slider-thumb]:transition-colors
+                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#ffa500]
+                  [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#ffa500]
                   [&::-moz-range-thumb]:transition-colors"
                 style={{
-                  background: `linear-gradient(to right, #f97316 ${machineFanSpeed}%, #e5e7eb ${machineFanSpeed}%)`,
+                  background: `linear-gradient(to right, #ffa500 ${machineFanSpeed}%, #e5e7eb ${machineFanSpeed}%)`,
                 }}
               />
-              <div className="mt-40 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#f97316]">
-                <FaFan className="text-[#f97316] text-3xl" />
+              <div className="mt-40 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#ffa500]">
+                <FaFan className="text-[#ffa500] text-3xl" />
                 <span className="pr-5">{machineFanSpeed}%</span>
               </div>
             </div>
@@ -229,9 +231,9 @@ const LeftController = () => {
                 onChange={handleBlueLightChange}
                 className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
-                  [&::-webkit-slider-thumb]:bg-[#a6bbff] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
+                  [&::-webkit-slider-thumb]:bg-[#8291ff] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
                   [&::-webkit-slider-thumb]:hover:bg-[#8291ff] [&::-webkit-slider-thumb]:transition-colors
-                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#a6bbff]
+                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#8291ff]
                   [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#8291ff]
                   [&::-moz-range-thumb]:transition-colors"
                 style={{
@@ -255,9 +257,9 @@ const LeftController = () => {
                 onChange={handleRedLightChange}
                 className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
-                  [&::-webkit-slider-thumb]:bg-[#ff8282] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
+                  [&::-webkit-slider-thumb]:bg-[#ff6663] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
                   [&::-webkit-slider-thumb]:hover:bg-[#ff6663] [&::-webkit-slider-thumb]:transition-colors
-                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#ff8282]
+                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#ff6663]
                   [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#ff6663]
                   [&::-moz-range-thumb]:transition-colors"
                 style={{

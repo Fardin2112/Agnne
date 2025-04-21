@@ -117,10 +117,10 @@ function Sanitation() {
   return (
     <div
       className={`h-full flex items-center justify-center transition-all duration-500 ${
-        isDarkMode ? "bg-gradient-to-br from-gray-900 to-black text-white" : "bg-gradient-to-br from-gray-100 to-white text-black"
+        isDarkMode ? "bg-gradient-to-br from-gray-900 to-black text-white" : " bg-gray-50 text-black"
       }`}
     >
-      <div className="relative p-6 rounded-3xl shadow-2xl bg-opacity-80 backdrop-blur-lg border border-opacity-20 border-gray-500 w-[90%] max-w-[900px]">
+      <div className="relative p-6 rounded-3xl shadow-2xl bg-opacity-80 backdrop-blur-lg border-opacity-20 w-[90%] max-w-[900px]">
         {/* Title */}
         <h3 className="text-3xl font-extrabold text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
           Sanitation Mode

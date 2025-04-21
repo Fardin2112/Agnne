@@ -25,7 +25,7 @@ function App() {
       className={`h-screen w-screen flex flex-col ${
         isDarkMode
           ? "bg-gradient-to-br from-gray-800 to-black text-white"
-          : "bg-white text-black"
+          : "bg-gray-50 text-black"
       }`}
     >
       {showAnimation ? (

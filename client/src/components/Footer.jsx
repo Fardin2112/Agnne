@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"; // For 3D animations
 import { assests } from "../assets/assests";
 import { UserContext } from "../context/UserContext";
 import { AppContext } from "../context/AppContext";
+import { MdOutlineStart } from "react-icons/md";
 
 function Footer() {
   const { toggleHome,setToggleHome } = useContext(AppContext);
@@ -88,13 +89,13 @@ function Footer() {
             }}
             className="flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 text-blue-500"
           >
-            <TiHome size={24} className="mb-1" />
+            <MdOutlineStart size={24} className="mb-1" />
             <span className="text-xs font-semibold">Start</span>
           </button>
         ) : (
           <button
             onClick={navigateToResearch} // Navigate to Deep Research
-            className="flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 text-blue-500"
+            className="flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2"
           >
             <TiHome size={24} className="mb-1" />
             <span className="text-xs font-semibold">Home</span>
