@@ -127,11 +127,11 @@ const LeftController = () => {
   return (
     <div className="flex justify-center items-center h-full w-full ">
       {/* Buttons */}
-      <div className="flex flex-col justify-between h-full w-20 bg-opacity-20">
-        <button onClick={()=>setToggleHome(false)} className="px-3 py-2 text-4xl rounded-br-2xl bg-[#FFFFFF] shadow-md hover:bg-gray-100 hover:scale-105">
+      <div className="flex flex-col justify-between h-full w-24 bg-opacity-20">
+        <button onClick={()=>setToggleHome(false)} className="px-4 py-4 text-4xl rounded-br-2xl bg-[#FFFFFF] shadow-md hover:bg-gray-100 hover:scale-105">
           <IoReturnUpBackOutline />
         </button>
-        <div className="flex flex-col bg-white rounded-r-full py-10 shadow-md">
+        <div className="flex flex-col items-center bg-white gap-y-2 rounded-r-full py-10 shadow-md">
           <button
             onClick={() => setActiveSection("fan")}
             className={`p-3 rounded-tr-3xl transition-colors ${
@@ -161,19 +161,19 @@ const LeftController = () => {
       </div>
 
       {/* Content Area */}
-      <div className="ml-6 flex-1">
+      <div className="flex justify-center pt-20 pb-5 px-5 items-center flex-1 w-full h-full">
         {activeSection === "fan" && (
-          <div className="flex w-[500px] h-[450px] items-center justify-center bg-white rounded-lg shadow-md">
+          <div className="flex w-full h-full items-center justify-center bg-white rounded-lg shadow-md">
             {/* 🌬️ User Fan Slider */}
-            <div className="flex w-[250px] flex-col items-center justify-center h-full">
-              <p className="text-[#22c55e] font-semibold">User Fan</p>
+            <div className="flex w-[250px] flex-col items-center h-full">
+              <p className="text-[#22c55e] font-semibold pt-4">User Fan</p>
               <input
                 type="range"
                 min="0"
                 max="100"
                 value={userFanSpeed}
                 onChange={handleUserfan}
-                className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
+                className="w-[440px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-60
                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
                   [&::-webkit-slider-thumb]:bg-[#22c55e] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
                   [&::-webkit-slider-thumb]:hover:bg-[#22c55e] [&::-webkit-slider-thumb]:transition-colors
@@ -184,7 +184,7 @@ const LeftController = () => {
                   background: `linear-gradient(to right, #22c55e ${userFanSpeed}%, #e5e7eb ${userFanSpeed}%)`,
                 }}
               />
-              <div className="mt-40 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#22c55e]">
+              <div className="mt-56 gap-2 flex items-center justify-center w-full px-4 text-[#22c55e]">
                 <FaFan className="text-[#22c55e] text-3xl" />
                 <span className="pr-5">{userFanSpeed}%</span>
               </div>
@@ -199,7 +199,7 @@ const LeftController = () => {
                 max="100"
                 value={machineFanSpeed}
                 onChange={handleMachinefan}
-                className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
+                className="w-[440px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-60
                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
                   [&::-webkit-slider-thumb]:bg-[#ffa500] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
                   [&::-webkit-slider-thumb]:hover:bg-[#ffa500] [&::-webkit-slider-thumb]:transition-colors
@@ -210,7 +210,7 @@ const LeftController = () => {
                   background: `linear-gradient(to right, #ffa500 ${machineFanSpeed}%, #e5e7eb ${machineFanSpeed}%)`,
                 }}
               />
-              <div className="mt-40 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#ffa500]">
+              <div className="mt-56 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#ffa500]">
                 <FaFan className="text-[#ffa500] text-3xl" />
                 <span className="pr-5">{machineFanSpeed}%</span>
               </div>
@@ -346,6 +346,7 @@ const LeftController = () => {
           </div>
         )}
       </div>
+      
     </div>
   );
 };

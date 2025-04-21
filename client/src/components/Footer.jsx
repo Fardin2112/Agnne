@@ -70,7 +70,7 @@ function Footer() {
     <>
       {/* Footer */}
       <motion.div
-        className={`h-[70px] flex justify-around items-center fixed bottom-0 left-0 w-full z-50 bg-opacity-90 backdrop-blur-md border-t border-opacity-20 shadow-[0_4px_15px_rgba(0,0,0,0.3)] perspective-1000 ${
+        className={`h-[100px] flex justify-around items-center fixed bottom-0 left-0 w-full z-50 bg-opacity-90 backdrop-blur-md border-t border-opacity-20 shadow-[0_4px_15px_rgba(0,0,0,0.3)] perspective-1000 ${
           isDarkMode
             ? "bg-gradient-to-r from-gray-900 via-gray-800 to-black border-gray-700 text-white"
             : "bg-[#FAFAFA] border-[#F1F3F4] text-gray-900"
@@ -87,63 +87,63 @@ function Footer() {
               setToggleHome(true);
               // Add any additional logic you want when the home button is clicked
             }}
-            className="flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 text-blue-500"
+            className="flex flex-col items-center transition-all duration-300 transform hover:scale-110 rounded-full p-1 text-blue-500"
           >
-            <MdOutlineStart size={24} className="mb-1" />
-            <span className="text-xs font-semibold">Start</span>
+            <MdOutlineStart size={32} className="mb-1" />
+            <span className="text-base font-semibold">Start</span>
           </button>
         ) : (
           <button
             onClick={navigateToResearch} // Navigate to Deep Research
-            className="flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2"
+            className="flex flex-col items-center transition-all duration-300 transform hover:scale-110 rounded-full p-1"
           >
-            <TiHome size={24} className="mb-1" />
-            <span className="text-xs font-semibold">Home</span>
+            <TiHome size={32} className="mb-1" />
+            <span className="text-base font-semibold">Home</span>
           </button>
         )}
 
         <NavLink
           to="/settings"
           className={({ isActive }) =>
-            `flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 ${
+            `flex flex-col items-center transition-all duration-300 transform hover:scale-110 rounded-full p-1 ${
               isActive ? "text-blue-500" : isDarkMode ? "text-gray-300" : "text-[#2B2E48]"
             }`
           }
         >
-          <FaCog size={20} className="mb-1" />
-          <span className="text-xs font-semibold">Settings</span>
+          <FaCog size={32} className="mb-1" />
+          <span className="text-base font-semibold">Settings</span>
         </NavLink>
 
         <NavLink
           to="/stats"
           className={({ isActive }) =>
-            `flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 ${
+            `flex flex-col items-center transition-all duration-300 transform hover:scale-110 rounded-full p-1 ${
               isActive ? "text-blue-500" : isDarkMode ? "text-gray-300" : "text-[#2B2E48]"
             }`
           }
         >
-          <FaChartBar size={20} className="mb-1" />
-          <span className="text-xs font-semibold">Stats</span>
+          <FaChartBar size={32} className="mb-1" />
+          <span className="text-base font-semibold">Stats</span>
         </NavLink>
 
         <NavLink
           to="/sanitation"
           className={({ isActive }) =>
-            `flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 ${
+            `flex flex-col items-center transition-all duration-300 transform hover:scale-110 rounded-full p-1 ${
               isActive ? "text-blue-500" : isDarkMode ? "text-gray-300" : "text-[#2B2E48]"
             }`
           }
         >
-          <FaDroplet size={20} className="mb-1" />
-          <span className="text-xs font-semibold">Sanitation</span>
+          <FaDroplet size={32} className="mb-1" />
+          <span className="text-base font-semibold">Sanitation</span>
         </NavLink>
 
         <button
           onClick={() => setShowPopup(true)}
-          className="flex flex-col items-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg rounded-full p-2 text-red-500"
+          className="flex flex-col items-center transition-all duration-300 transform hover:scale-110 rounded-full p-1 text-red-500"
         >
-          <FaPowerOff size={20} className="mb-1" />
-          <span className="text-xs font-semibold">Shutdown</span>
+          <FaPowerOff size={32} className="mb-1" />
+          <span className="text-base font-semibold">Shutdown</span>
         </button>
       </motion.div>
 
@@ -182,7 +182,7 @@ function Footer() {
               <div className="flex justify-center space-x-6">
                 <motion.button
                   onClick={handleShutdown}
-                  className="px-6 py-3 text-white rounded-xl bg-gradient-to-r from-red-600 to-red-800 shadow-lg transform transition-all duration-300 hover:scale-105 active:scale-95"
+                  className="px-6 py-3 text-white rounded-xl bg-gradient-to-r from-red-600 to-red-800 transform transition-all duration-300 hover:scale-105 active:scale-95"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -190,7 +190,7 @@ function Footer() {
                 </motion.button>
                 <motion.button
                   onClick={() => setShowPopup(false)}
-                  className="px-6 py-3 text-white rounded-xl bg-gradient-to-r from-gray-600 to-gray-800 shadow-lg transform transition-all duration-300 hover:scale-105 active:scale-95"
+                  className="px-6 py-3 text-white rounded-xl bg-gradient-to-r from-gray-600 to-gray-800 transform transition-all duration-300 hover:scale-105 active:scale-95"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

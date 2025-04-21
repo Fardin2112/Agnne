@@ -5,7 +5,8 @@ import RightController from './RightController'
 function Controller() {
   return (
     // bg-[#FFFFF]/70 bg-gray-50
-    <div className='h-full w-full flex bg-gray-50'> 
+    <div className='w-full h-full'>
+    <div className='h-[85%] w-full flex bg-gray-50'> 
       <div className='w-[60%]'>
         <LeftController />
       </div>
@@ -15,6 +16,10 @@ function Controller() {
       <div className='w-[40%]'>
         <RightController />
       </div>
+    </div>
+    <footer className='h-[15%] bg-red-600'>
+      hello
+    </footer>
     </div>
   )
 }

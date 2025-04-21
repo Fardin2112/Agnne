@@ -117,9 +117,10 @@ function RightController() {
 
   // ========== UI ==========
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full">
+    <div className="w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full pb-5 pt-20 px-5">
       {/* Timer Section */}
-      <div className="bg-white w-[90%] h-[450px] flex flex-col items-center shadow-md rounded-lg p-6">
+      <div className="bg-white w-full h-full flex flex-col items-center shadow-md rounded-lg p-6">
         <p className={`font-semibold text-lg ${isDarkMode ? "text-white" : "text-gray-700"}`}>
           Session Time
         </p>
@@ -224,6 +225,7 @@ function RightController() {
             </>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
