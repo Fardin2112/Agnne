@@ -17,7 +17,7 @@ function Controller() {
         <RightController />
       </div>
     </div>
-    <footer className='h-[15%] bg-red-600'>
+    <footer className='flex items-center justify-center h-[15%] bg-[#FFFFFF] shadow-md rounded-t-full'>
       hello
     </footer>
     </div>

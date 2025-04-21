@@ -186,7 +186,7 @@ const LeftController = () => {
               />
               <div className="mt-56 gap-2 flex items-center justify-center w-full px-4 text-[#22c55e]">
                 <FaFan className="text-[#22c55e] text-3xl" />
-                <span className="pr-5">{userFanSpeed}%</span>
+                <span className="pr-5 font-bold">{userFanSpeed}%</span>
               </div>
             </div>
 
@@ -212,16 +212,16 @@ const LeftController = () => {
               />
               <div className="mt-56 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#ffa500]">
                 <FaFan className="text-[#ffa500] text-3xl" />
-                <span className="pr-5">{machineFanSpeed}%</span>
+                <span className="pr-5 font-bold">{machineFanSpeed}%</span>
               </div>
             </div>
           </div>
         )}
 
         {activeSection === "light" && (
-          <div className="flex w-[500px] h-[450px] items-center justify-center bg-white rounded-lg shadow-md">
+          <div className="flex w-full h-full items-center justify-center bg-white rounded-lg shadow-md">
             {/* 🔵 Blue Light Slider */}
-            <div className="flex w-[250px] flex-col items-center justify-center h-full">
+            <div className="flex w-[250px] flex-col items-center pt-4 h-full">
               <p className="text-[#8291ff] font-semibold">Blue Light</p>
               <input
                 type="range"
@@ -229,7 +229,7 @@ const LeftController = () => {
                 max="100"
                 value={blueLight}
                 onChange={handleBlueLightChange}
-                className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
+                className="w-[440px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-60
                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
                   [&::-webkit-slider-thumb]:bg-[#8291ff] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
                   [&::-webkit-slider-thumb]:hover:bg-[#8291ff] [&::-webkit-slider-thumb]:transition-colors
@@ -240,9 +240,9 @@ const LeftController = () => {
                   background: `linear-gradient(to right, #8291ff ${blueLight}%, #e5e7eb ${blueLight}%)`,
                 }}
               />
-              <div className="mt-40 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#8291ff]">
+              <div className="mt-56 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#8291ff]">
                 <HiOutlineLightBulb className="text-[#8291ff] text-3xl" />
-                <span className="pr-5">{blueLight}%</span>
+                <span className="pr-5 font-bold">{blueLight}%</span>
               </div>
             </div>
 
@@ -255,7 +255,7 @@ const LeftController = () => {
                 max="100"
                 value={redLight}
                 onChange={handleRedLightChange}
-                className="w-[300px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-40
+                className="w-[440px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-60
                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
                   [&::-webkit-slider-thumb]:bg-[#ff6663] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
                   [&::-webkit-slider-thumb]:hover:bg-[#ff6663] [&::-webkit-slider-thumb]:transition-colors
@@ -266,16 +266,16 @@ const LeftController = () => {
                   background: `linear-gradient(to right, #ff6663 ${redLight}%, #e5e7eb ${redLight}%)`,
                 }}
               />
-              <div className="mt-40 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#ff6663]">
+              <div className="mt-56 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#ff6663]">
                 <HiOutlineLightBulb className="text-[#ff6663] text-3xl" />
-                <span className="pr-5">{redLight}%</span>
+                <span className="pr-5 font-bold">{redLight}%</span>
               </div>
             </div>
           </div>
         )}
 
         {activeSection === "temp" && (
-          <div className="flex flex-col w-[500px] h-[450px] bg-white rounded-lg shadow-md p-6">
+          <div className="flex flex-col w-full h-full bg-white rounded-lg shadow-md p-6">
             {/* 🌡️ User Temp Control */}
             <div className="flex flex-col items-center">
               <div className="w-32 h-32 relative flex items-center justify-center">

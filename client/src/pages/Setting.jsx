@@ -15,8 +15,7 @@ function Setting() {
       {/* Settings Container */}
       <div className="grid grid-cols-2 gap-8 gap-y-10 px-10 w-full">
         {/* Dark Mode Card */}
-        <div className={` p-6 rounded-xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} hover:bg-opacity-90 transition-all duration-200`}>
-          <div className="flex items-center justify-between py-3">
+        <div className={`flex items-center justify-between h-[200px] p-6 rounded-xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} hover:bg-opacity-90 transition-all duration-200`}>
             <span className="text-lg font-semibold">Dark Mode</span>
             <button
               onClick={toggleDarkMode}
@@ -30,12 +29,10 @@ function Setting() {
                 }`}
               />
             </button>
-          </div>
         </div>
 
         {/* Voice Commands Card */}
-        <div className={`p-6 rounded-xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} hover:bg-opacity-90 transition-all duration-200`}>
-          <div className="flex items-center justify-between py-3">
+        <div className={`flex items-center justify-between p-6 rounded-xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} hover:bg-opacity-90 transition-all duration-200`}>
             <span className="text-lg font-semibold">Voice Commands</span>
             <button
               onClick={toggleVoiceCommands}
@@ -49,11 +46,10 @@ function Setting() {
                 }`}
               />
             </button>
-          </div>
         </div>
 
         {/* Power Consumption Card */}
-        <div className={`p-6 rounded-xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} hover:bg-opacity-90 transition-all duration-200`}>
+        <div className={`flex flex-col justify-center h-[200px] p-6 rounded-xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} hover:bg-opacity-90 transition-all duration-200`}>
           <h2 className="text-lg font-semibold mb-4">Power Consumption</h2>
           <p className="text-2xl font-bold text-center">
             {powerUsage} W

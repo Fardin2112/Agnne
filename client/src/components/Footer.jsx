@@ -157,7 +157,7 @@ function Footer() {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className={`p-6 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-opacity-95 backdrop-blur-md w-[90%] max-w-md ${
+              className={`p-6 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-opacity-95 backdrop-blur-md w-[90%] max-w-3xl ${
                 isDarkMode
                   ? "bg-gradient-to-br from-gray-800 to-black text-white"
                   : "bg-gradient-to-br from-white to-gray-100 text-black"
@@ -171,18 +171,18 @@ function Footer() {
                 <motion.img
                   src={assests.shutdown}
                   alt="Shutdown"
-                  className="mx-auto mb-4 w-20 h-20"
+                  className="mx-auto mb-4 w-28 h-28"
                   variants={iconVariants}
                   initial="hidden"
                   animate="visible"
                 />
-                <p className="text-xl font-bold mb-2">Shutdown Confirmation</p>
-                <p className="text-sm">Are you sure you want to shut down the system?</p>
+                <p className="text-2xl font-bold mb-2">Shutdown Confirmation</p>
+                <p className="text-base">Are you sure you want to shut down the system?</p>
               </div>
               <div className="flex justify-center space-x-6">
                 <motion.button
                   onClick={handleShutdown}
-                  className="px-6 py-3 text-white rounded-xl bg-gradient-to-r from-red-600 to-red-800 transform transition-all duration-300 hover:scale-105 active:scale-95"
+                  className="px-8 py-4 text-white rounded-xl bg-gradient-to-r from-red-600 to-red-800 transform transition-all duration-300 hover:scale-105 active:scale-95"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -190,7 +190,7 @@ function Footer() {
                 </motion.button>
                 <motion.button
                   onClick={() => setShowPopup(false)}
-                  className="px-6 py-3 text-white rounded-xl bg-gradient-to-r from-gray-600 to-gray-800 transform transition-all duration-300 hover:scale-105 active:scale-95"
+                  className="px-8 py-4 text-white rounded-xl bg-gradient-to-r from-gray-600 to-gray-800 transform transition-all duration-300 hover:scale-105 active:scale-95"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
