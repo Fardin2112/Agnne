@@ -10,7 +10,7 @@ function Stats() {
 
   return (
     <div className={`min-h-screen pt-10 pb-8 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'} flex flex-col items-start space-y-6 p-4 transition-colors duration-300`}>
-      <div className='grid grid-cols-2 gap-4 grid-y-10 w-full px-10 bg-green-400'>
+      <div className='grid grid-cols-2 gap-4 grid-y-10 w-full px-10'>
       {/* Total Sessions Card */}
       <div className={`w-full max-w-lg p-6 rounded-xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} hover:bg-opacity-90 transition-all duration-200`}>
         <p className="text-xl font-semibold">Total Sessions</p>

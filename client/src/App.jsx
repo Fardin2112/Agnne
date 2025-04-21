@@ -6,7 +6,6 @@ import Navbar from "./components/Navbar";
 import Setting from "./pages/Setting";
 import Stats from "./pages/Stats";
 import Sanitation from "./pages/Sanitation/Sanitation";
-import Shutdown from "./pages/Shutdown";
 import AgneeAnimation from "./components/AgneeAnimation";
 import { UserContext } from "./context/UserContext";
 import { AppContext } from "./context/AppContext";
@@ -47,7 +46,6 @@ function App() {
               <Route path="/settings" element={<Setting />} />
               <Route path="/stats" element={<Stats />} />
               <Route path="/sanitation" element={<Sanitation />} />
-              <Route path="/shutdown" element={<Shutdown />} />
             </Routes>
           </div>
 
