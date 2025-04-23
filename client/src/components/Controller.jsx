@@ -6,7 +6,7 @@ function Controller() {
   return (
     // bg-[#FFFFF]/70 bg-gray-50
     <div className='w-full h-full'>
-    <div className='h-[85%] w-full flex bg-gray-50'> 
+    <div className='h-[100%] w-full flex bg-gray-50'> 
       <div className='w-[60%]'>
         <LeftController />
       </div>
@@ -17,9 +17,6 @@ function Controller() {
         <RightController />
       </div>
     </div>
-    <footer className='flex items-center justify-center h-[15%] bg-[#FFFFFF] shadow-md rounded-t-full'>
-      hello
-    </footer>
     </div>
   )
 }
