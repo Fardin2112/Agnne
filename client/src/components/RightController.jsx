@@ -2,9 +2,12 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import { FaPlay, FaPause, FaStop, FaMinus, FaPlus } from "react-icons/fa6";
 import { UserContext } from "../context/UserContext";
+import { AppContext } from "../context/AppContext";
 
 function RightController() {
   const { isDarkMode, isRunning, setIsRunning } = useContext(UserContext);
+  const { sessionComlpletePopup, setSessionCompletePopup } =
+    useContext(AppContext);
 
   const [sessionTime, setSessionTime] = useState(15);
   const [timeLeft, setTimeLeft] = useState(sessionTime * 60);
@@ -22,6 +25,7 @@ function RightController() {
         clearInterval(timerRef.current);
         stopSession();
         setIsRunning(false);
+        setSessionTime(15);
         return 0;
       });
     }, 1000);
@@ -71,7 +75,9 @@ function RightController() {
     try {
       await sendSessionTime();
       setIsRunning(true);
-      await axios.post("http://localhost:3000/api/device/session/start", { sessionTime });
+      await axios.post("http://localhost:3000/api/device/session/start", {
+        sessionTime,
+      });
       console.log("✅ Session started");
     } catch (error) {
       console.error("❌ Start session failed", error);
@@ -112,11 +118,14 @@ function RightController() {
     stopSession();
     setIsRunning(false);
     setTimeLeft(sessionTime * 60);
+    setSessionCompletePopup(true);
     clearInterval(timerRef.current);
   };
 
-  const handleIncreaseTimeChange = () => setSessionTime((prev) => Math.min(60, prev + 1));
-  const handleDecreaseTimeChange = () => setSessionTime((prev) => Math.max(1, prev - 1));
+  const handleIncreaseTimeChange = () =>
+    setSessionTime((prev) => Math.min(60, prev + 1));
+  const handleDecreaseTimeChange = () =>
+    setSessionTime((prev) => Math.max(1, prev - 1));
 
   // Dynamic stroke color for timer based on timeLeft
   const getTimerStrokeColor = () => {
@@ -129,14 +138,29 @@ function RightController() {
   // ========== UI ==========
   return (
     <div className="w-full h-full">
-<div className="flex flex-col items-center justify-center w-full h-full pb-5 pt-20 px-5">
+      
+      <div className="flex flex-col items-center justify-center w-full h-full pb-5 pt-20 px-5">
         {/* Timer Section */}
         <div className="bg-[#F4F7FB] w-full h-full flex flex-col items-center justify-center shadow-md rounded-lg p-6">
-        <p className={`relative font-semibold text-lg ${isDarkMode ? "text-[#7C7474]" : "text-gray-700"} pb-2 after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-32 after:h-[1px] after:bg-[#F9FAFB] after:shadow-[0_2px_4px_rgba(0,0,0,0.2)]`}>
-  Session Time
-</p>
+          <p
+            className={`relative font-['Playfair'] font-semibold text-2xl ${
+              isDarkMode ? "text-gray-700" : "text-gray-700"
+            } pb-2 after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-32 after:h-[1px] after:bg-gray-400 after:shadow-[0_2px_4px_rgba(0,0,0,0.2)]`}
+          >
+            Session Time
+          </p>
           {/* Timer Circle */}
-          <div className="relative flex flex-col items-center mt-6">
+          <div className="relative flex justify-evenly items-center mt-6 w-full">
+            <div>
+              <button
+                onClick={handleDecreaseTimeChange}
+                className={`p-2 rounded-full border-1 border-[#00C2FF] shadow-md text-xl font-bold ${
+                  isDarkMode ? "text-white" : "text-gray-700"
+                }`}
+              >
+                <FaMinus className="text-2xl text-[#00C2FF]" />
+              </button>
+            </div>
             <svg width="280" height="280" viewBox="0 0 120 120">
               {/* Background Circle */}
               <circle
@@ -170,82 +194,81 @@ function RightController() {
                 strokeWidth="2"
               />
             </svg>
-            <span
-              className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold rounded-full ${
+            <button
+              onClick={handleIncreaseTimeChange}
+              className={`p-2 rounded-full border-1 border-[#00C2FF] shadow-md text-xl font-bold ${
                 isDarkMode ? "text-white" : "text-gray-700"
               }`}
             >
-              {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
+              <FaPlus className="text-2xl text-[#00C2FF]" />
+            </button>
+
+            <span
+              className={`absolute font-['playfair'] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl rounded-full ${
+                isDarkMode ? "text-white" : "text-gray-700"
+              }`}
+            >
+              <p>
+                {Math.floor(timeLeft / 60)}:
+                {String(timeLeft % 60).padStart(2, "0")}
+              </p>
             </span>
+            <p className="absolute top-[55%] text-gray-400 font-['playfair'] text-2xl mt-5">
+              Minutes
+            </p>
           </div>
 
-        {/* Time Controls */}
-        <div className="flex justify-between mt-[-8px] w-[190px]">
-          <button
-            onClick={handleDecreaseTimeChange}
-            className={`p-2 rounded-full border-1 border-[#00C2FF] shadow-md text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-700"}`}
-          >
-            <FaMinus className="text-2xl text-[#00C2FF]" />
-          </button>
-          <button
-            onClick={handleIncreaseTimeChange}
-            className={`p-2 rounded-full border-1 border-[#00C2FF] shadow-md text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-700"}`}
-          >
-            <FaPlus className="text-2xl text-[#00C2FF]" />
-          </button>
-        </div>
+          {/* Time Controls */}
+          <div className="flex justify-between mt-[-8px] w-[190px]"></div>
 
-        {/* Control Buttons */}
-        <div className="mt-6 flex gap-3 font-semibold">
-          {isRunning ? (
-            <div className="flex items-center w-[100px] justify-evenly px-2 py-2 border-1 text-[#00C2FF] border-[#00C2FF] shadow-md text-xl font-bold rounded-4xl">
-              <button
-                onClick={handlePause}
-                className=""
-              >
-                <FaPause />
-                
-              </button>
-              <button
-                onClick={handleStop}
-                className=""
-              >
-                <FaStop />
-                
-              </button>
-            </div>
-          ) : (
-            <>
-              {isInitialState ? (
-           <button
-           onClick={handleStart}
-           className="relative px-7 py-2 rounded-full text-[#00C2FF] bg-  shadow-[0_-8px_16px_-2px_rgba(249,250,251,0.8),0_6px_16px_-2px_rgba(0,0,0,0.2)] text-xl font-bold transition-all duration-300 ease-in-out hover:shadow-[0_8px_15px_-3px_rgba(0,0,0,0.3),0_4px_10px_-2px_#F9FAFB] hover:bg-gray-100"
-         >
-           Start
-         </button>
-              ) : (
-                <div className="flex items-center w-[100px] justify-evenly px-2 py-2 border-1 text-[#00C2FF] border-[#00C2FF] shadow-md text-xl font-bold rounded-4xl">
-                
+          {/* Control Buttons */}
+          <div className="mt-6 flex h-[100px] w-full">
+            <div className="flex items-center justify-center w-full">
+              {isRunning ? (
+                <div className="flex items-center gap-10 justify-evenly px-6 py-6 text-[#00C2FF] border-[#00C2FF] text-xl font-bold">
                   <button
-                    onClick={handleResume}
-                    className=""
+                    onClick={handlePause}
+                    className="shadow-lg rounded-4xl px-3 py-3"
                   >
-                    <FaPlay />
-                    
+                    <FaPause className="text-4xl" />
                   </button>
                   <button
                     onClick={handleStop}
-                    className=""
+                    className="shadow-lg rounded-4xl px-3 py-3"
                   >
-                    <FaStop />
-                   
+                    <FaStop className="text-4xl" />
                   </button>
                 </div>
+              ) : (
+                <>
+                  {isInitialState ? (
+                    <button
+                      onClick={handleStart}
+                      className="font-['Playfair'] relative px-10 py-2 rounded-full text-gray-900 shadow-[0_-8px_16px_-2px_rgba(249,250,251,0.8),0_6px_16px_-2px_rgba(0,0,0,0.2)] text-4xl transition-all duration-300 ease-in-out hover:shadow-none hover:bg-gray-100"
+                    >
+                      START
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-10 justify-evenly px-6 py-6 text-[#00C2FF] border-[#00C2FF] text-xl font-bold">
+                      <button
+                        onClick={handleResume}
+                        className="shadow-lg rounded-4xl px-3 py-3"
+                      >
+                        <FaPlay className="text-4xl" />
+                      </button>
+                      <button
+                        onClick={handleStop}
+                        className="shadow-lg rounded-4xl px-3 py-3"
+                      >
+                        <FaStop className="text-4xl" />
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
-            </>
-          )}
+            </div>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

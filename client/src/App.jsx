@@ -9,11 +9,13 @@ import Sanitation from "./pages/Sanitation/Sanitation";
 import AgneeAnimation from "./components/AgneeAnimation";
 import { UserContext } from "./context/UserContext";
 import { AppContext } from "./context/AppContext";
+import './index.css'
 
 function App() {
   const [showAnimation, setShowAnimation] = useState(true);
   const { isDarkMode } = useContext(UserContext);
   const { toggleHome } = useContext(AppContext);
+  const {sessionComlpletePopup, setSessionCompletePopup} = useContext(AppContext);
 
   useEffect(() => {
     setTimeout(() => setShowAnimation(false), 4000); // Hide animation after 4s
