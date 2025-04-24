@@ -152,14 +152,14 @@ const LeftController = () => {
   return (
     <div className="flex justify-center items-center h-full w-full ">
       {/* Buttons */}
-      <div className="flex flex-col justify-between h-full w-24 bg-opacity-20">
+      <div className="flex flex-col justify-between h-full w-24 bg-opacity-20]">
         <button
           onClick={() => setToggleHome(false)}
-          className="px-4 py-4 text-4xl rounded-br-2xl bg-[#FFFFFF] shadow-md hover:bg-gray-100 hover:scale-105"
+          className="px-4 py-4 text-4xl rounded-br-2xl bg-[#F4F7FB] shadow-md hover:bg-gray-100 hover:scale-105"
         >
           <IoReturnUpBackOutline />
         </button>
-        <div className="flex flex-col items-center bg-white gap-y-2 rounded-r-full py-10 shadow-md">
+        <div className="flex flex-col items-center bg-[F4F7FB] gap-y-2 rounded-r-full py-10 shadow-md">
           <button
             onClick={() => setActiveSection("fan")}
             className={`p-3 rounded-tr-3xl transition-colors ${
@@ -313,7 +313,7 @@ const LeftController = () => {
         )}
 
         {activeSection === "temp" && (
-          <div className="flex flex-col w-full h-full rounded-lg shadow-md p-6 bg-white">
+          <div className="flex flex-col w-full h-full rounded-lg shadow-md p-6 bg-[#F4F7FB]">
             {/* 🌡️ User Temp Control */}
             <div className="flex flex-col items-center h-[1/2]">
             <div className="w-full h-[260px] flex items-center justify-center">

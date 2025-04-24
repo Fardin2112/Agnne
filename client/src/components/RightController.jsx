@@ -27,6 +27,17 @@ function RightController() {
     }, 1000);
   };
 
+  // Calculate knob position
+  const getKnobPosition = () => {
+    const radius = 50; // Same as the progress circle's radius
+    const circumference = 2 * Math.PI * radius; // Full circle circumference
+    const progress = timeLeft / (sessionTime * 60); // Progress ratio (0 to 1)
+    const angle = (progress * 360 - 90) * (Math.PI / 180); // Convert to radians, adjust for -90° rotation
+    const x = 60 + radius * Math.cos(angle); // Center (60, 60)
+    const y = 60 + radius * Math.sin(angle);
+    return { x, y };
+  };
+
   // 🧠 useEffect to clean up interval on unmount or stop
   useEffect(() => {
     return () => clearInterval(timerRef.current);
@@ -118,45 +129,55 @@ function RightController() {
   // ========== UI ==========
   return (
     <div className="w-full h-full">
-      <div className="flex flex-col items-center justify-center w-full h-full pb-5 pt-20 px-5">
-      {/* Timer Section */}
-      <div className="bg-white w-full h-full flex flex-col items-center shadow-md rounded-lg p-6">
-        <p className={`font-semibold text-lg ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-          Session Time
-        </p>
-
-        {/* Timer Circle */}
-        <div className="relative flex flex-col items-center mt-6">
-          <svg width="180" height="180" viewBox="0 0 120 120">
-            <circle
-              cx="60"
-              cy="60"
-              r="50"
-              fill="transparent"
-              stroke="#e5e7eb" // Static gray background
-              strokeWidth="7"
-            />
-            <circle
-              cx="60"
-              cy="60"
-              r="50"
-              fill="transparent"
-              stroke={getTimerStrokeColor()} // Dynamic stroke color
-              strokeWidth="3"
-              strokeDasharray="314"
-              strokeDashoffset={314 - (timeLeft / (sessionTime * 60)) * 314}
-              strokeLinecap="round"
-              transform="rotate(-90 60 60)"
-            />
-          </svg>
-          <span
-            className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold rounded-full${
-              isDarkMode ? "text-white" : "text-gray-700"
-            }`}
-          >
-            {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
-          </span>
-        </div>
+<div className="flex flex-col items-center justify-center w-full h-full pb-5 pt-20 px-5">
+        {/* Timer Section */}
+        <div className="bg-[#F4F7FB] w-full h-full flex flex-col items-center justify-center shadow-md rounded-lg p-6">
+        <p className={`relative font-semibold text-lg ${isDarkMode ? "text-[#7C7474]" : "text-gray-700"} pb-2 after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-32 after:h-[1px] after:bg-[#F9FAFB] after:shadow-[0_2px_4px_rgba(0,0,0,0.2)]`}>
+  Session Time
+</p>
+          {/* Timer Circle */}
+          <div className="relative flex flex-col items-center mt-6">
+            <svg width="280" height="280" viewBox="0 0 120 120">
+              {/* Background Circle */}
+              <circle
+                cx="60"
+                cy="60"
+                r="50"
+                fill="transparent"
+                stroke="lightgray"
+                strokeWidth="2"
+              />
+              {/* Progress Bar */}
+              <circle
+                cx="60"
+                cy="60"
+                r="50"
+                fill="transparent"
+                stroke={getTimerStrokeColor()}
+                strokeWidth="2"
+                strokeDasharray="314"
+                strokeDashoffset={314 - (timeLeft / (sessionTime * 60)) * 314}
+                strokeLinecap="round"
+                transform="rotate(-90 60 60)"
+              />
+              {/* Knob */}
+              <circle
+                cx={getKnobPosition().x}
+                cy={getKnobPosition().y}
+                r="3" // Knob size
+                fill="#ffffff" // White fill for visibility
+                stroke={getTimerStrokeColor()} // Match progress bar color
+                strokeWidth="2"
+              />
+            </svg>
+            <span
+              className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold rounded-full ${
+                isDarkMode ? "text-white" : "text-gray-700"
+              }`}
+            >
+              {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
+            </span>
+          </div>
 
         {/* Time Controls */}
         <div className="flex justify-between mt-[-8px] w-[190px]">
@@ -196,13 +217,12 @@ function RightController() {
           ) : (
             <>
               {isInitialState ? (
-                <button
-                  onClick={handleStart}
-                  className="p-2 rounded-full border-1 text-[#00C2FF] border-[#00C2FF] shadow-md text-xl font-bold"
-                >
-                  <FaPlay />
-                  
-                </button>
+           <button
+           onClick={handleStart}
+           className="relative px-7 py-2 rounded-full text-[#00C2FF] bg-  shadow-[0_-8px_16px_-2px_rgba(249,250,251,0.8),0_6px_16px_-2px_rgba(0,0,0,0.2)] text-xl font-bold transition-all duration-300 ease-in-out hover:shadow-[0_8px_15px_-3px_rgba(0,0,0,0.3),0_4px_10px_-2px_#F9FAFB] hover:bg-gray-100"
+         >
+           Start
+         </button>
               ) : (
                 <div className="flex items-center w-[100px] justify-evenly px-2 py-2 border-1 text-[#00C2FF] border-[#00C2FF] shadow-md text-xl font-bold rounded-4xl">
                 

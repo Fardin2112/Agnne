@@ -6,7 +6,7 @@ function Controller() {
   return (
     // bg-[#FFFFF]/70 bg-gray-50
     <div className='w-full h-full'>
-    <div className='h-[100%] w-full flex bg-gray-50'> 
+    <div className='h-[100%] w-full flex bg-[#EFF1F5]'> 
       <div className='w-[60%]'>
         <LeftController />
       </div>
