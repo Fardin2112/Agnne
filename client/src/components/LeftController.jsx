@@ -9,6 +9,7 @@ import { HiLightBulb } from "react-icons/hi";
 import { LiaTemperatureLowSolid } from "react-icons/lia";
 import { IoReturnUpBackOutline } from "react-icons/io5";
 import { AppContext } from "../context/AppContext";
+import LightControlPanel from "./LightControlPanel";
 
 const LeftController = () => {
   const {
@@ -146,6 +147,9 @@ const LeftController = () => {
   // Arc path from left to right (180°)
   const arcPath = `M ${startX} ${centerY} A ${radius} ${radius} 0 0 1 ${endX} ${centerY}`;
 
+
+
+
   return (
     <div className="flex justify-center items-center h-full w-full ">
       {/* Buttons */}
@@ -161,25 +165,23 @@ const LeftController = () => {
             onClick={() => setActiveSection("fan")}
             className={`p-3 rounded-tr-3xl transition-colors ${
               activeSection === "fan"
-                ? "bg-gray-100 shadow-md"
+                ? "bg-[#F4F7FB] text-[#00C2FF]"
                 : "hover:bg-gray-100 hover:rounded-tr-3xl hover:scale-110"
             }`}
           >
             <PiFanFill
-              className={`text-5xl text-[#000000]/70 ${
-                activeSection === "fan" ? "text-[#000000]" : ""
-              }`}
+              className={`text-5xl ${activeSection === "fan" ? "" : ""}`}
             />
           </button>
           <button
             onClick={() => setActiveSection("light")}
             className={`p-3 rounded-lg transition-colors ${
               activeSection === "light"
-                ? "bg-gray-100 shadow-md"
+                ? "bg-[#F4F7FB] text-[#00C2FF]"
                 : "hover:bg-gray-100 hover:scale-110"
             }`}
           >
-            <HiLightBulb className="text-5xl text-[#000000]/70" />
+            <HiLightBulb className="text-5xl" />
           </button>
           <button
             onClick={() => setActiveSection("temp")}
@@ -254,59 +256,7 @@ const LeftController = () => {
         )}
 
         {activeSection === "light" && (
-          <div className="flex w-full h-full items-center justify-center bg-white rounded-lg shadow-md">
-            {/* 🔵 Blue Light Slider */}
-            <div className="flex w-[250px] flex-col items-center pt-4 h-full">
-              <p className="text-[#8291ff] font-semibold">Blue Light</p>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={blueLight}
-                onChange={handleBlueLightChange}
-                className="w-[440px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-60
-                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
-                  [&::-webkit-slider-thumb]:bg-[#8291ff] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
-                  [&::-webkit-slider-thumb]:hover:bg-[#8291ff] [&::-webkit-slider-thumb]:transition-colors
-                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#8291ff]
-                  [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#8291ff]
-                  [&::-moz-range-thumb]:transition-colors"
-                style={{
-                  background: `linear-gradient(to right, #8291ff ${blueLight}%, #e5e7eb ${blueLight}%)`,
-                }}
-              />
-              <div className="mt-56 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#8291ff]">
-                <HiOutlineLightBulb className="text-[#8291ff] text-3xl" />
-                <span className="pr-5 font-bold">{blueLight}%</span>
-              </div>
-            </div>
-
-            {/* 🔴 Red Light Slider */}
-            <div className="flex w-[250px] flex-col items-center text-[#ff6663] justify-center h-full">
-              <p className="font-semibold">Red Light</p>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={redLight}
-                onChange={handleRedLightChange}
-                className="w-[440px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-60
-                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
-                  [&::-webkit-slider-thumb]:bg-[#ff6663] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
-                  [&::-webkit-slider-thumb]:hover:bg-[#ff6663] [&::-webkit-slider-thumb]:transition-colors
-                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#ff6663]
-                  [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#ff6663]
-                  [&::-moz-range-thumb]:transition-colors"
-                style={{
-                  background: `linear-gradient(to right, #ff6663 ${redLight}%, #e5e7eb ${redLight}%)`,
-                }}
-              />
-              <div className="mt-56 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#ff6663]">
-                <HiOutlineLightBulb className="text-[#ff6663] text-3xl" />
-                <span className="pr-5 font-bold">{redLight}%</span>
-              </div>
-            </div>
-          </div>
+          <LightControlPanel/>
         )}
 
         {activeSection === "temp" && (
@@ -899,28 +849,28 @@ const LeftController = () => {
                   </defs>
                 </svg>
                 <button
-                    onClick={increaseUserTemp}
-                    className="px-4 py-4 rounded-full shadow-md"
-                  >
-                    <FaPlus className="text-4xl " />
-                  </button>
+                  onClick={increaseUserTemp}
+                  className="px-4 py-4 rounded-full shadow-md"
+                >
+                  <FaPlus className="text-4xl " />
+                </button>
               </div>
 
               <div className="flex gap-2 h-full justify-start items-start pt-10 ">
                 <p className="flex justify-evenly shadow-md text-4xl px-4 py-4 rounded-3xl font-['poppins']">
-                    {maxUserTemp}
+                  {maxUserTemp}
                 </p>
               </div>
             </div>
 
             {/* ⚙️ Machine Temp Control */}
             <div className="flex justify-evenly items-center h-[1/2]">
-            <div className="flex justify-evenly items-start h-full pt-10">
+              <div className="flex justify-evenly items-start h-full pt-10">
                 <p className="text-4xl rounded-3xl shadow-md px-2 py-2">Mode</p>
               </div>
               <div className="h-full flex items-center justify-center">
                 {/* minus button  */}
-              <button
+                <button
                   onClick={decreaseMachineTemp}
                   className="px-4 py-4 rounded-full shadow-md"
                 >
@@ -1512,11 +1462,10 @@ const LeftController = () => {
               {/* max user temp  */}
               <div className="flex gap-2 h-full justify-start items-start pt-10 ">
                 <p className="flex justify-evenly shadow-md text-4xl px-4 py-4 rounded-3xl font-['poppins']">
-                    {maxMachineTemp}
+                  {maxMachineTemp}
                 </p>
               </div>
             </div>
-
           </div>
         )}
       </div>

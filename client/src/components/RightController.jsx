@@ -208,7 +208,7 @@ function RightController() {
                 isDarkMode ? "text-white" : "text-gray-700"
               }`}
             >
-              <p className="text-[#00C2FF]">
+              <p className="text-gray-700">
                 {Math.floor(timeLeft / 60)}:
                 {String(timeLeft % 60).padStart(2, "0")}
               </p>
