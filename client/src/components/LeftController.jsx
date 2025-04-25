@@ -79,13 +79,12 @@ const LeftController = () => {
     setMaxMachineTemp(newValue);
     console.log("clicked machine inc");
   };
-  
+
   const decreaseMachineTemp = async () => {
     const newValue = Math.max(maxMachineTemp - 1, 0);
     await MaxMachineTempFun(newValue);
     setMaxMachineTemp(newValue);
   };
-  
 
   // ⬆️⬇️ Send max machine temp update to server
   const MaxMachineTempFun = async (value) => {
@@ -128,8 +127,6 @@ const LeftController = () => {
   // Calculate percentage for circle progress
   const userTempPercentage =
     maxUserTemp === 0 ? 0 : (userTemp / maxUserTemp) * 100;
-
-
 
   const machineTempPercentage =
     maxMachineTemp === 0 ? 0 : (machineTemp / maxMachineTemp) * 100;
@@ -188,11 +185,11 @@ const LeftController = () => {
             onClick={() => setActiveSection("temp")}
             className={`p-3 rounded-br-3xl transition-colors ${
               activeSection === "temp"
-                ? "bg-gray-100"
-                : "hover:bg-gray-100 hover:rounded-br-3xl hover:scale-110"
+                ? "bg-[#F4F7FB] text-[#00C2FF]"
+                : "hover:bg-gray-100 hover:rounded-br-3xl hover:scale-110 text-[#000000]/70"
             }`}
           >
-            <LiaTemperatureLowSolid className="text-5xl text-[#000000]/70" />
+            <LiaTemperatureLowSolid className="text-5xl " />
           </button>
         </div>
         <div></div>
@@ -313,13 +310,22 @@ const LeftController = () => {
         )}
 
         {activeSection === "temp" && (
-          <div className="flex flex-col w-full h-full rounded-lg shadow-md p-6 bg-[#F4F7FB]">
+          <div className="flex flex-col w-full h-full rounded-lg shadow-md bg-[#F4F7FB]">
             {/* 🌡️ User Temp Control */}
-            <div className="flex flex-col items-center h-[1/2]">
-            <div className="w-full h-[260px] flex items-center justify-center">
+            <div className="flex justify-evenly items-center h-[1/2]">
+              <div className="flex justify-evenly pt-10 items-start h-full ">
+                <p className="text-4xl shadow-md rounded-3xl px-2 py-2">Mode</p>
+              </div>
+              <div className="h-full flex items-center justify-center">
+                <button
+                  onClick={decreaseUserTemp}
+                  className="px-4 py-4 rounded-full shadow-md"
+                >
+                  <FaMinus className="text-4xl" />
+                </button>
                 <svg
-                  width="380"
-                  height="330"
+                  width="400"
+                  height="400"
                   viewBox="0 0 390 384"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -892,31 +898,37 @@ const LeftController = () => {
                     </linearGradient>
                   </defs>
                 </svg>
+                <button
+                    onClick={increaseUserTemp}
+                    className="px-4 py-4 rounded-full shadow-md"
+                  >
+                    <FaPlus className="text-4xl " />
+                  </button>
               </div>
-          
-              <div className="flex gap-2">
-                <button
-                  onClick={decreaseUserTemp}
-                  className="px-2 py-2 rounded"
-                >
-                  <FaMinus className="text-2xl" />
-                </button>
-                <p className="px-2 py-2 text-xl">{maxUserTemp}</p>
-                <button
-                  onClick={increaseUserTemp}
-                  className="px-2 py-2 rounded"
-                >
-                  <FaPlus className="text-2xl" />
-                </button>
+
+              <div className="flex gap-2 h-full justify-start items-start pt-10 ">
+                <p className="flex justify-evenly shadow-md text-4xl px-4 py-4 rounded-3xl font-['poppins']">
+                    {maxUserTemp}
+                </p>
               </div>
             </div>
 
             {/* ⚙️ Machine Temp Control */}
-            <div className="flex flex-col items-center pt-10 h-[1/2]">
-              <div className="w-full h-[260px]  flex items-center justify-center">
+            <div className="flex justify-evenly items-center h-[1/2]">
+            <div className="flex justify-evenly items-start h-full pt-10">
+                <p className="text-4xl rounded-3xl shadow-md px-2 py-2">Mode</p>
+              </div>
+              <div className="h-full flex items-center justify-center">
+                {/* minus button  */}
+              <button
+                  onClick={decreaseMachineTemp}
+                  className="px-4 py-4 rounded-full shadow-md"
+                >
+                  <FaMinus className="text-4xl" />
+                </button>
                 <svg
-                  width="380"
-                  height="330"
+                  width="400"
+                  height="400"
                   viewBox="0 0 390 384"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -1489,24 +1501,22 @@ const LeftController = () => {
                     </linearGradient>
                   </defs>
                 </svg>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={decreaseMachineTemp}
-                  className="px-2 py-2 rounded"
-                >
-                  <FaMinus className="text-2xl" />
-                </button>
-                <p className="px-2 py-2 text-xl">{maxMachineTemp}</p>
+                {/* plus button  */}
                 <button
                   onClick={increaseMachineTemp}
-                  className="px-2 py-2 rounded"
+                  className="px-4 py-4 rounded-full shadow-md"
                 >
-                  <FaPlus className="text-2xl" />
+                  <FaPlus className="text-4xl" />
                 </button>
               </div>
-
+              {/* max user temp  */}
+              <div className="flex gap-2 h-full justify-start items-start pt-10 ">
+                <p className="flex justify-evenly shadow-md text-4xl px-4 py-4 rounded-3xl font-['poppins']">
+                    {maxMachineTemp}
+                </p>
+              </div>
             </div>
+
           </div>
         )}
       </div>

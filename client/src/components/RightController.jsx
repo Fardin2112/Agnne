@@ -143,9 +143,9 @@ function RightController() {
         {/* Timer Section */}
         <div className="bg-[#F4F7FB] w-full h-full flex flex-col items-center justify-center shadow-md rounded-lg p-6">
           <p
-            className={`relative font-['Playfair'] font-semibold text-2xl ${
-              isDarkMode ? "text-gray-700" : "text-gray-700"
-            } pb-2 after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-32 after:h-[1px] after:bg-gray-400 after:shadow-[0_2px_4px_rgba(0,0,0,0.2)]`}
+            className={`relative font-['Playfair'] font-semibold text-4xl ${
+              isDarkMode ? "text-[#00C2FF]" : "text-[#00C2FF]"
+            } pb-2 after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-60 after:h-[1px] after:bg-gray-400 after:shadow-[0_2px_4px_rgba(0,0,0,0.2)]`}
           >
             Session Time
           </p>
@@ -154,14 +154,14 @@ function RightController() {
             <div>
               <button
                 onClick={handleDecreaseTimeChange}
-                className={`p-2 rounded-full border-1 border-[#00C2FF] shadow-md text-xl font-bold ${
+                className={`p-4 rounded-full shadow-md text-xl font-bold ${
                   isDarkMode ? "text-white" : "text-gray-700"
                 }`}
               >
-                <FaMinus className="text-2xl text-[#00C2FF]" />
+                <FaMinus className="text-4xl text-[#00C2FF]" />
               </button>
             </div>
-            <svg width="280" height="280" viewBox="0 0 120 120">
+            <svg width="300" height="300" viewBox="0 0 120 120">
               {/* Background Circle */}
               <circle
                 cx="60"
@@ -196,11 +196,11 @@ function RightController() {
             </svg>
             <button
               onClick={handleIncreaseTimeChange}
-              className={`p-2 rounded-full border-1 border-[#00C2FF] shadow-md text-xl font-bold ${
+              className={`p-4 rounded-full shadow-md text-xl font-bold ${
                 isDarkMode ? "text-white" : "text-gray-700"
               }`}
             >
-              <FaPlus className="text-2xl text-[#00C2FF]" />
+              <FaPlus className="text-4xl text-[#00C2FF]" />
             </button>
 
             <span
@@ -208,7 +208,7 @@ function RightController() {
                 isDarkMode ? "text-white" : "text-gray-700"
               }`}
             >
-              <p>
+              <p className="text-[#00C2FF]">
                 {Math.floor(timeLeft / 60)}:
                 {String(timeLeft % 60).padStart(2, "0")}
               </p>
@@ -228,13 +228,13 @@ function RightController() {
                 <div className="flex items-center gap-10 justify-evenly px-6 py-6 text-[#00C2FF] border-[#00C2FF] text-xl font-bold">
                   <button
                     onClick={handlePause}
-                    className="shadow-lg rounded-4xl px-3 py-3"
+                    className="shadow-lg rounded-4xl px-3 py-3 transition-all duration-300 ease-in-out hover:scale-95"
                   >
                     <FaPause className="text-4xl" />
                   </button>
                   <button
                     onClick={handleStop}
-                    className="shadow-lg rounded-4xl px-3 py-3"
+                    className="shadow-lg rounded-4xl px-3 py-3 transition-all duration-300 ease-in-out hover:scale-95"
                   >
                     <FaStop className="text-4xl" />
                   </button>
@@ -244,7 +244,7 @@ function RightController() {
                   {isInitialState ? (
                     <button
                       onClick={handleStart}
-                      className="font-['Playfair'] relative px-10 py-2 rounded-full text-gray-900 shadow-[0_-8px_16px_-2px_rgba(249,250,251,0.8),0_6px_16px_-2px_rgba(0,0,0,0.2)] text-4xl transition-all duration-300 ease-in-out hover:shadow-none hover:bg-gray-100"
+                      className="font-['Playfair'] bg-[#00C2FF] text-white relative px-10 py-2 rounded-full text-4xl transition-all duration-300 ease-in-out hover:scale-95"
                     >
                       START
                     </button>
@@ -252,13 +252,13 @@ function RightController() {
                     <div className="flex items-center gap-10 justify-evenly px-6 py-6 text-[#00C2FF] border-[#00C2FF] text-xl font-bold">
                       <button
                         onClick={handleResume}
-                        className="shadow-lg rounded-4xl px-3 py-3"
+                        className="shadow-lg rounded-4xl px-3 py-3 transition-all duration-300 ease-in-out hover:scale-95"
                       >
                         <FaPlay className="text-4xl" />
                       </button>
                       <button
                         onClick={handleStop}
-                        className="shadow-lg rounded-4xl px-3 py-3"
+                        className="shadow-lg rounded-4xl px-3 py-3 transition-all duration-300 ease-in-out hover:scale-95"
                       >
                         <FaStop className="text-4xl" />
                       </button>
