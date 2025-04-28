@@ -34,19 +34,7 @@ const LeftController = () => {
   const { toggleHome, setToggleHome } = useContext(AppContext);
   const [activeSection, setActiveSection] = useState("light"); // Default to light
 
-  // 🔵 Handle blue light slider change
-  const handleBlueLightChange = (e) => {
-    const newValue = Number(e.target.value);
-    setBlueLight(newValue);
-    sendWsMessage(`BLUE_INTENSITY=${newValue}`);
-  };
 
-  // 🔴 Handle red light slider change
-  const handleRedLightChange = (e) => {
-    const newValue = Number(e.target.value);
-    setRedLight(newValue);
-    sendWsMessage(`RED_INTENSITY=${newValue}`);
-  };
 
   // 🔼 Increase max user temp and sync with backend
   const increaseUserTemp = async () => {
@@ -260,7 +248,7 @@ const LeftController = () => {
         )}
 
         {activeSection === "temp" && (
-          <div className="flex flex-col w-full h-full rounded-lg shadow-md bg-[#F4F7FB]">
+          <div className="flex flex-col w-full h-full rounded-lg shadow-md bg-[#F4F7FB] text-gray-700">
             {/* 🌡️ User Temp Control */}
             <div className="flex justify-evenly items-center h-[1/2]">
               <div className="flex justify-evenly pt-10 items-start h-full ">

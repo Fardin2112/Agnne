@@ -1,9 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 const LightSlider = ({ color, value, onChange }) => {
   const [isDragging, setIsDragging] = useState(false);
   const sliderRef = useRef(null);
   const knobRef = useRef(null);
+
+  const {isDarkMode} = useContext(UserContext);
   
   const colorConfig = {
     red: {
@@ -63,7 +66,7 @@ const LightSlider = ({ color, value, onChange }) => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <label className="font-medium text-gray-300">
+        <label className={`font-medium ${isDarkMode ? "text-white" :"text-gray-400"} `}>
           {colorConfig[color].label}
         </label>
         <span className="text-md font-semibold" style={{ color: color === 'red' ? '#ef4444' : '#3b82f6' }}>

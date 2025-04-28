@@ -84,11 +84,11 @@ const LightPreview = ({ blueLight, redLight }) => {
   }, [blueLight, redLight]);
   
   return (
-    <div className="relative bg-gray-900 rounded-xl overflow-hidden" style={{ height: '250px' }}>
+    <div className="relative bg-gray-900 rounded-xl overflow-hidden" style={{ height: '180px' }}>
       <div className="absolute inset-0 flex items-center justify-center">
         <canvas ref={canvasRef} className="w-full h-full" />
       </div>
-      <div className="absolute bottom-4 left-4 bg-black bg-opacity-60 px-3 py-1.5 rounded-lg text-xs">
+      <div className="absolute bottom-4 left-4 text-white bg-black bg-opacity-60 px-3 py-1.5 rounded-lg text-xs">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: `rgb(${Math.round((redLight / 100) * 255)}, 0, 0)` }} />
           <span>Red: {redLight}%</span>
