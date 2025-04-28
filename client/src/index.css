@@ -14,10 +14,13 @@
   }
 }
 
+/* scroll bar hidden */
 ::-webkit-scrollbar {
   @apply hidden
 }
 
+
+/* agnee logo font */
 @font-face {
     font-family: "Anurati";
     src: url("./assets/fonts/Anurati-Regular.otf") format("opentype");

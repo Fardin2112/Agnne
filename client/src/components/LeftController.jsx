@@ -10,6 +10,7 @@ import { LiaTemperatureLowSolid } from "react-icons/lia";
 import { IoReturnUpBackOutline } from "react-icons/io5";
 import { AppContext } from "../context/AppContext";
 import LightControlPanel from "./LightControlPanel";
+import FanController from "./FanController";
 
 const LeftController = () => {
   const {
@@ -75,43 +76,7 @@ const LeftController = () => {
     setMaxMachineTemp(newValue);
   };
 
-  // ⬆️⬇️ Send max machine temp update to server
-  const MaxMachineTempFun = async (value) => {
-    try {
-      await axios.post("http://localhost:3000/api/device/machine-maxtemp", {
-        value,
-      });
-      console.log("✅ Max Machine Temp Set:", value);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  // 🌬️ Send fan speed to server
-  const sendFanSpeed = async (type, value) => {
-    try {
-      await axios.post(`http://localhost:3000/api/device/fan/${type}`, {
-        value,
-      });
-      console.log(`✅ Fan ${type} updated: ${value}`);
-    } catch (error) {
-      console.error(`❌ Fan ${type} update failed`, error);
-    }
-  };
-
-  // 🌬️ Handle user fan speed change
-  const handleUserfan = (e) => {
-    const value = Number(e.target.value);
-    setUserFanSpeed(value);
-    sendFanSpeed("user", value);
-  };
-
-  // 🌬️ Handle machine fan speed change
-  const handleMachinefan = (e) => {
-    const value = Number(e.target.value);
-    setMachineFanSpeed(value);
-    sendFanSpeed("machine", value);
-  };
+ 
 
   // Calculate percentage for circle progress
   const userTempPercentage =
@@ -188,59 +153,7 @@ const LeftController = () => {
       {/* Content Area */}
       <div className="flex justify-center pt-20 pb-5 px-5 items-center flex-1 w-full h-full">
         {activeSection === "fan" && (
-          <div className="flex w-full h-full items-center justify-center bg-white rounded-lg shadow-md">
-            {/* 🌬️ User Fan Slider */}
-            <div className="flex w-[250px] flex-col items-center h-full">
-              <p className="text-[#22c55e] font-semibold pt-4">User Fan</p>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={userFanSpeed}
-                onChange={handleUserfan}
-                className="w-[440px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-60
-                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
-                  [&::-webkit-slider-thumb]:bg-[#22c55e] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
-                  [&::-webkit-slider-thumb]:hover:bg-[#22c55e] [&::-webkit-slider-thumb]:transition-colors
-                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#22c55e]
-                  [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#22c55e]
-                  [&::-moz-range-thumb]:transition-colors"
-                style={{
-                  background: `linear-gradient(to right, #22c55e ${userFanSpeed}%, #e5e7eb ${userFanSpeed}%)`,
-                }}
-              />
-              <div className="mt-56 gap-2 flex items-center justify-center w-full px-4 text-[#22c55e]">
-                <FaFan className="text-[#22c55e] text-3xl" />
-                <span className="pr-5 font-bold">{userFanSpeed}%</span>
-              </div>
-            </div>
-
-            {/* 🌬️ Machine Fan Slider */}
-            <div className="flex w-[250px] flex-col items-center justify-center h-full">
-              <p className="text-[#ffa500] font-semibold">Machine Fan</p>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={machineFanSpeed}
-                onChange={handleMachinefan}
-                className="w-[440px] h-3 bg-gray-200 rounded-full appearance-none cursor-pointer transform -rotate-90 mt-60
-                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
-                  [&::-webkit-slider-thumb]:bg-[#ffa500] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md
-                  [&::-webkit-slider-thumb]:hover:bg-[#ffa500] [&::-webkit-slider-thumb]:transition-colors
-                  [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:bg-[#ffa500]
-                  [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#ffa500]
-                  [&::-moz-range-thumb]:transition-colors"
-                style={{
-                  background: `linear-gradient(to right, #ffa500 ${machineFanSpeed}%, #e5e7eb ${machineFanSpeed}%)`,
-                }}
-              />
-              <div className="mt-56 gap-2 flex items-center justify-center w-full px-4 bg-white text-[#ffa500]">
-                <FaFan className="text-[#ffa500] text-3xl" />
-                <span className="pr-5 font-bold">{machineFanSpeed}%</span>
-              </div>
-            </div>
-          </div>
+         <FanController/>
         )}
 
         {activeSection === "light" && (

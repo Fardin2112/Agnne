@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
-const LightSlider = ({ color, value, onChange }) => {
+const FanSlider = ({ color, value, onChange }) => {
   const [isDragging, setIsDragging] = useState(false);
   const sliderRef = useRef(null);
   const knobRef = useRef(null);
@@ -9,18 +9,20 @@ const LightSlider = ({ color, value, onChange }) => {
   const {isDarkMode} = useContext(UserContext);
   
   const colorConfig = {
-    red: {
-      label: 'Red Light',
-      trackColor: 'rgba(239, 68, 68, 0.3)',
-      activeColor: 'rgba(239, 68, 68, 0.7)',
-      glowColor: 'rgba(239, 68, 68, 0.6)',
+    yellow: {
+      label: 'Yellow Light',
+      trackColor: 'rgba(251, 188, 5, 0.3)',
+      activeColor: 'rgba(251, 188, 5, 1)',
+      glowColor: 'rgba(251, 188, 5, 0.6)',
       iconPath: 'M12 7a5 5 0 1 1-4.995 5.217L7 12l.005-.217A5 5 0 0 1 12 7z'
-    },
-    blue: {
-      label: 'Blue Light',
-      trackColor: 'rgba(59, 130, 246, 0.3)',
-      activeColor: 'rgba(59, 130, 246, 0.7)',
-      glowColor: 'rgba(59, 130, 246, 0.6)',
+    }
+    ,
+    
+    green: {
+      label: 'Green Light',
+      trackColor: 'rgba(0, 128,0, 0.3)',
+      activeColor: 'rgba(0, 128, 0, 0.7)',
+      glowColor: 'rgba(0, 128, 0, 0.6)',
       iconPath: 'M12 7a5 5 0 1 1-4.995 5.217L7 12l.005-.217A5 5 0 0 1 12 7z'
     }
   };
@@ -66,10 +68,10 @@ const LightSlider = ({ color, value, onChange }) => {
   return (
     <div className="space-y-4 w-[650px]">
       <div className="flex justify-between items-center">
-        <label className={`font-medium ${isDarkMode ? "text-white" :"text-gray-400"} `}>
-          {colorConfig[color].label}
+        <label className={`text-xl font-medium ${isDarkMode ? "text-white" :"text-gray-400"} `}>
+          {/* {colorConfig[color].label} */}
         </label>
-        <span className="text-md font-semibold" style={{ color: color === 'red' ? '#ef4444' : '#3b82f6' }}>
+        <span className="text-2xl font-semibold" style={{ color: color === 'yellow' ? '#374151' : '#374151' }}>
           {value}%
         </span>
       </div>
@@ -102,7 +104,7 @@ const LightSlider = ({ color, value, onChange }) => {
           style={{
             left: knobPosition,
             transform: `translateX(-50%) scale(${isDragging ? 1.1 : 1})`,
-            background: `radial-gradient(circle at center, ${color === 'red' ? '#ef4444' : '#3b82f6'} 0%, ${color === 'red' ? '#b91c1c' : '#1d4ed8'} 100%)`,
+            background: `radial-gradient(circle at center, ${color === 'yellow' ? '#facc15' : '#008000'} 0%, ${color === 'yellow' ? '#facc15' : '#008000'} 100%)`,
             boxShadow: `0 0 15px ${colorConfig[color].glowColor}, 0 0 5px ${colorConfig[color].glowColor}`,
             transition: isDragging ? 'none' : 'transform 0.2s, box-shadow 0.2s',
           }}
@@ -120,4 +122,4 @@ const LightSlider = ({ color, value, onChange }) => {
   );
 };
 
-export default LightSlider;
+export default FanSlider;
