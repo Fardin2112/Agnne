@@ -1,125 +1,104 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import { UserContext } from '../context/UserContext';
+import React, { useRef, useState, useEffect } from "react";
 
-const FanSlider = ({ color, value, onChange }) => {
-  const [isDragging, setIsDragging] = useState(false);
+const CustomSlider = () => {
   const sliderRef = useRef(null);
-  const knobRef = useRef(null);
+  const [value, setValue] = useState(50); // Default to middle (0–100)
 
-  const {isDarkMode} = useContext(UserContext);
-  
-  const colorConfig = {
-    yellow: {
-      label: 'Yellow Light',
-      trackColor: 'rgba(251, 188, 5, 0.3)',
-      activeColor: 'rgba(251, 188, 5, 1)',
-      glowColor: 'rgba(251, 188, 5, 0.6)',
-      iconPath: 'M12 7a5 5 0 1 1-4.995 5.217L7 12l.005-.217A5 5 0 0 1 12 7z'
-    }
-    ,
-    
-    green: {
-      label: 'Green Light',
-      trackColor: 'rgba(0, 128,0, 0.3)',
-      activeColor: 'rgba(0, 128, 0, 0.7)',
-      glowColor: 'rgba(0, 128, 0, 0.6)',
-      iconPath: 'M12 7a5 5 0 1 1-4.995 5.217L7 12l.005-.217A5 5 0 0 1 12 7z'
-    }
+  const calculateValue = (clientX) => {
+    const slider = sliderRef.current;
+    if (!slider) return 0;
+    const { left, width } = slider.getBoundingClientRect();
+    let percent = (clientX - left) / width;
+    percent = Math.max(0, Math.min(1, percent));
+    return Math.round(percent * 100); // 0 to 100
+  };
+
+  const handlePointerMove = (e) => {
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    setValue(calculateValue(clientX));
+  };
+
+  const handlePointerDown = (e) => {
+    handlePointerMove(e);
+    window.addEventListener("mousemove", handlePointerMove);
+    window.addEventListener("touchmove", handlePointerMove);
+    window.addEventListener("mouseup", handlePointerUp);
+    window.addEventListener("touchend", handlePointerUp);
+  };
+
+  const handlePointerUp = () => {
+    window.removeEventListener("mousemove", handlePointerMove);
+    window.removeEventListener("touchmove", handlePointerMove);
+    window.removeEventListener("mouseup", handlePointerUp);
+    window.removeEventListener("touchend", handlePointerUp);
   };
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (!isDragging || !sliderRef.current) return;
-      
-      const rect = sliderRef.current.getBoundingClientRect();
-      const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-      const newValue = Math.round((x / rect.width) * 100);
-      onChange(newValue);
-    };
-    
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
-    
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging, onChange]);
+    return () => handlePointerUp(); // Cleanup
+  }, []);
 
-  const handleMouseDown = () => {
-    setIsDragging(true);
-  };
+  const getThumbLeft = () => `${value}%`;
 
-  const handleTrackClick = (e) => {
-    if (!sliderRef.current) return;
-    
-    const rect = sliderRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const newValue = Math.round((x / rect.width) * 100);
-    onChange(newValue);
-  };
-
-  const knobPosition = `${value}%`;
-  
   return (
-    <div className="space-y-4 w-[650px]">
-      <div className="flex justify-between items-center">
-        <label className={`text-xl font-medium ${isDarkMode ? "text-white" :"text-gray-400"} `}>
-          {/* {colorConfig[color].label} */}
-        </label>
-        <span className="text-2xl font-semibold" style={{ color: color === 'yellow' ? '#374151' : '#374151' }}>
-          {value}%
-        </span>
-      </div>
-      
-      <div 
+    <div className="flex flex-col items-center w-full bg-black h-[100px]">
+      {/* Slider track */}
+      <div
         ref={sliderRef}
-        className="h-16 relative cursor-pointer rounded-xl p-2 transition-transform hover:scale-[1.01]"
-        onClick={handleTrackClick}
-        style={{
-          background: `linear-gradient(to right, ${colorConfig[color].activeColor} 0%, ${colorConfig[color].activeColor} ${value}%, ${colorConfig[color].trackColor} ${value}%, ${colorConfig[color].trackColor} 100%)`,
-          boxShadow: `0 0 20px ${colorConfig[color].glowColor}`,
-          transform: `perspective(1000px) rotateX(${isDragging ? '12deg' : '8deg'})`,
-        }}
+        onMouseDown={handlePointerDown}
+        onTouchStart={handlePointerDown}
+        className="relative w-full max-w-md h-[50px] mt-5 cursor-pointer"
       >
-        <div className="absolute inset-0 rounded-xl opacity-20 bg-gradient-to-b from-white to-transparent pointer-events-none" />
-        
-        <div className="absolute inset-x-0 inset-y-2 flex justify-between px-2 pointer-events-none">
-          {[...Array(11)].map((_, i) => (
-            <div 
-              key={i} 
-              className="w-0.5 h-full bg-gray-500 opacity-30"
-              style={{ opacity: value >= i * 10 ? 0.6 : 0.2 }}
+        {/* Tick marks */}
+        <div className="absolute left-0 top-1/2 w-full h-px bg-white/20">
+          {[...Array(21)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute top-[-6px] w-px h-3 bg-white"
+              style={{ left: `${(i / 20) * 100}%` }}
             />
           ))}
         </div>
-        
-        <div
-          ref={knobRef}
-          className={`absolute top-1/2 -translate-y-1/2 w-10 h-10 rounded-full cursor-grab ${isDragging ? 'cursor-grabbing' : ''}`}
-          style={{
-            left: knobPosition,
-            transform: `translateX(-50%) scale(${isDragging ? 1.1 : 1})`,
-            background: `radial-gradient(circle at center, ${color === 'yellow' ? '#facc15' : '#008000'} 0%, ${color === 'yellow' ? '#facc15' : '#008000'} 100%)`,
-            boxShadow: `0 0 15px ${colorConfig[color].glowColor}, 0 0 5px ${colorConfig[color].glowColor}`,
-            transition: isDragging ? 'none' : 'transform 0.2s, box-shadow 0.2s',
-          }}
-          onMouseDown={handleMouseDown}
-        >
-          <svg viewBox="0 0 24 24" className="w-full h-full p-2 text-white opacity-70">
-            <path 
-              fill="currentColor" 
-              d={colorConfig[color].iconPath} 
-            />
-          </svg>
-        </div>
+
+        {/* Thumb with circular progress */}
+{/* Thumb with circular progress */}
+<div
+  className="absolute transform -translate-x-1/2 bg-transparent text-black w-10 h-10 flex items-center justify-center"
+  style={{ left: getThumbLeft(), top: 'calc(50% - 65px)' }}
+>
+  {/* Vertical connecting line */}
+  <div className="absolute bottom-[-33px] w-[2px] bg-white" style={{ height: '25px' }} />
+
+  {/* SVG circular progress */}
+  <svg className="absolute w-10 h-10 rotate-[-90deg]" viewBox="0 0 36 36">
+    <circle
+      cx="18"
+      cy="18"
+      r="16"
+      fill="none"
+      stroke="gray"
+      strokeWidth="3"
+    />
+    <circle
+      cx="18"
+      cy="18"
+      r="16"
+      fill="none"
+      stroke="#ffffff"
+      strokeWidth="3"
+      strokeDasharray="100"
+      strokeDashoffset={100 - value}
+      strokeLinecap="round"
+    />
+  </svg>
+
+  {/* Value circle */}
+  <div className="absolute w-8 h-8 rounded-full bg-black text-white shadow flex items-center justify-center text-sm font-bold">
+    {value}
+  </div>
+</div>
       </div>
     </div>
   );
 };
 
-export default FanSlider;
+export default CustomSlider;

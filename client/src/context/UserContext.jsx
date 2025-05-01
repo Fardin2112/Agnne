@@ -54,8 +54,20 @@ const UserContextProvider = (props) => {
   const [emergencyError, setEmergencyError] = useState();
   const [overheatError, setOverheatError] = useState();
   const [emergencyStop, setEmergencyStop] = useState(false);
-  
 
+
+
+  // const modes = ['custom', 'relax', 'intense'];        
+  // const [modeIndex, setModeIndex] = useState(0);
+
+  const [usercustomValue, setUsercustomValue] = useState(33);
+  const [machinecustomValue, setMachinecustomValue] = useState(44)
+  const [userRelaxValue, setUserRelaxValue] = useState(35);                     // modes for max temp
+  const [userIntenseValue, setUserIntenseValue] = useState(45)   
+  
+  const [machineRelaxValue, setMachineRelaxValue] = useState(40);
+  const [machineIntenseValue, setMachineIntenseValue] = useState(50);
+  
 
   const wsRef = useRef(null); // 🔌 Store WebSocket reference
 
@@ -197,6 +209,14 @@ const UserContextProvider = (props) => {
     overheatError, setOverheatError,
 
     isRunning, setIsRunning , // session is runing
+
+    usercustomValue, setUsercustomValue,
+    machinecustomValue, setMachinecustomValue,
+    userRelaxValue, setUserRelaxValue,                // for mode changes in user max temp
+    userIntenseValue, setUserIntenseValue,  
+
+    machineRelaxValue, setMachineRelaxValue,
+    machineIntenseValue, setMachineIntenseValue,
 
     espData,
     connected,

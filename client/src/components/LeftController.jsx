@@ -15,40 +15,85 @@ import FanController from "./FanController";
 const LeftController = () => {
   const {
     isDarkMode,
-    blueLight,
-    setBlueLight,
-    redLight,
-    setRedLight,
     userTemp,
     machineTemp,
     maxUserTemp,
     setMaxUserTemp,
     maxMachineTemp,
     setMaxMachineTemp,
-    userFanSpeed,
-    setUserFanSpeed,
-    machineFanSpeed,
-    setMachineFanSpeed,
     sendWsMessage,
+    userRelaxValue,
+    usercustomValue,setUsercustomValue,
+    machinecustomValue, setMachinecustomValue,
+    userIntenseValue,
+    machineRelaxValue,
+    machineIntenseValue, 
   } = useContext(UserContext);
-
+  
   const { toggleHome, setToggleHome } = useContext(AppContext);
-  const [activeSection, setActiveSection] = useState("light"); // Default to light
+  const [activeSection, setActiveSection] = useState("light"); // button logic to change left side
+  // such as fan,temp,light default to light
 
+  // logic for modes in temp
+  const UsertempMode = ["Custom","Relax","Intense"];
+  const [UsertempmodeIndex, setUsertempModeIndex] = useState(0);
+  const currentMode = UsertempMode[UsertempmodeIndex];
 
+  const getCurrentValue = () => {
+    if (currentMode === "Custom") return usercustomValue;
+    if (currentMode === "Relax") return userRelaxValue;
+    return maxMachineTemp;
+  };
+
+  const handleClick = () => {
+    const newIndex = (UsertempmodeIndex + 1) % UsertempMode.length;
+    setUsertempModeIndex(newIndex);
+
+    const newMode = UsertempMode[newIndex];
+    let newValue;
+    if (newMode === "Custom") {
+       newValue = usercustomValue;
+      MaxMachineTempFun(machinecustomValue);
+      setMaxMachineTemp(machinecustomValue)
+    }
+    else if (newMode === "Relax") {
+      newValue = userRelaxValue;
+      MaxMachineTempFun(machineRelaxValue);
+      setMaxMachineTemp(machineRelaxValue);
+    } 
+    else if (newMode === "Intense") {
+      newValue = userIntenseValue;
+      MaxMachineTempFun(machineIntenseValue);
+      setMaxMachineTemp(machineIntenseValue);
+    }
+
+    // Send to backend and update UI
+    MaxUserTempFun(newValue);
+    setMaxUserTemp(newValue);
+  };
 
   // 🔼 Increase max user temp and sync with backend
   const increaseUserTemp = async () => {
-    const value = maxUserTemp + 1;
+    const value = Math.min(maxUserTemp + 1, 60);
+  
+    // 💡 Switch to Custom mode
+    setUsertempModeIndex(0); // 0 = "Custom"
+    setUsercustomValue(value);   // update custom value
+  
     await MaxUserTempFun(value);
-    setMaxUserTemp((prev) => Math.min(prev + 1, 60));
+    setMaxUserTemp(value);
   };
 
   // 🔽 Decrease max user temp and sync with backend
   const decreaseUserTemp = async () => {
-    const value = maxUserTemp - 1;
+    const value = Math.max(maxUserTemp - 1, 0);
+  
+    // 💡 Switch to Custom mode
+    setUsertempModeIndex(0);
+    setUsercustomValue(value);
+  
     await MaxUserTempFun(value);
-    setMaxUserTemp((prev) => Math.max(prev - 1, 0));
+    setMaxUserTemp(value);
   };
 
   // ⬆️⬇️ Send max user temp update to server
@@ -64,19 +109,39 @@ const LeftController = () => {
   };
 
   const increaseMachineTemp = async () => {
-    const newValue = Math.min(maxMachineTemp + 1, 75);
-    await MaxMachineTempFun(newValue);
-    setMaxMachineTemp(newValue);
-    console.log("clicked machine inc");
+    const value = Math.min(maxMachineTemp + 1, 75);
+
+     // 💡 Switch to Custom mode
+     setUsertempModeIndex(0);
+     setMachinecustomValue(value);
+
+    await MaxMachineTempFun(value);
+    setMaxMachineTemp(value);
   };
 
   const decreaseMachineTemp = async () => {
-    const newValue = Math.max(maxMachineTemp - 1, 0);
-    await MaxMachineTempFun(newValue);
-    setMaxMachineTemp(newValue);
+    const value = Math.max(maxMachineTemp - 1, 0);
+
+     // 💡 Switch to Custom mode
+     setUsertempModeIndex(0);
+     setMachinecustomValue(value);
+
+
+    await MaxMachineTempFun(value);
+    setMaxMachineTemp(value);
   };
 
- 
+  // Send max machine temp update to server
+  const MaxMachineTempFun = async (value) => {
+    try {
+      await axios.post("http://localhost:3000/api/device/machine-maxtemp", {
+        value,
+      });
+      console.log("✅ Max Machine Temp Set:", value);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   // Calculate percentage for circle progress
   const userTempPercentage =
@@ -99,9 +164,6 @@ const LeftController = () => {
 
   // Arc path from left to right (180°)
   const arcPath = `M ${startX} ${centerY} A ${radius} ${radius} 0 0 1 ${endX} ${centerY}`;
-
-
-
 
   return (
     <div className="flex justify-center items-center h-full w-full ">
@@ -152,20 +214,23 @@ const LeftController = () => {
 
       {/* Content Area */}
       <div className="flex justify-center pt-20 pb-5 px-5 items-center flex-1 w-full h-full">
-        {activeSection === "fan" && (
-         <FanController/>
-        )}
+        {activeSection === "fan" && <FanController />}
 
-        {activeSection === "light" && (
-          <LightControlPanel/>
-        )}
+        {activeSection === "light" && <LightControlPanel />}
 
         {activeSection === "temp" && (
           <div className="flex flex-col w-full h-full rounded-lg shadow-md bg-[#F4F7FB] text-gray-700">
             {/* 🌡️ User Temp Control */}
             <div className="flex justify-evenly items-center h-[1/2]">
-              <div className="flex justify-evenly pt-10 items-start h-full ">
-                <p className="text-4xl shadow-md rounded-3xl px-2 py-2">Mode</p>
+              <div className="flex justify-evenly pt-10 items-start h-full">
+                <div className="rounded-4xl bg-gray-700 shadow-md">
+                  <button
+                    onClick={handleClick}
+                    className="text-xl shadow-md rounded-3xl w-28  m-1.5 px-3 py-2 bg-black text-white"
+                  >
+                    {currentMode}
+                  </button>
+                </div>
               </div>
               <div className="h-full flex items-center justify-center">
                 <button
@@ -757,17 +822,26 @@ const LeftController = () => {
                 </button>
               </div>
 
-              <div className="flex gap-2 h-full justify-start items-start pt-10 ">
-                <p className="flex justify-evenly shadow-md text-4xl px-4 py-4 rounded-3xl font-['poppins']">
-                  {maxUserTemp}
-                </p>
+              <div className="flex gap-2 h-full justify-start items-start pt-10">
+                <div className="bg-gray-700 rounded-3xl shadow-md">
+                  <p className="flex justify-evenly bg-black text-white shadow-md text-3xl m-1 px-4 py-3 rounded-3xl font-['poppins']">
+                    {maxUserTemp}
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* ⚙️ Machine Temp Control */}
             <div className="flex justify-evenly items-center h-[1/2]">
-              <div className="flex justify-evenly items-start h-full pt-10">
-                <p className="text-4xl rounded-3xl shadow-md px-2 py-2">Mode</p>
+              <div className="flex justify-evenly w-28 items-start h-full pt-10 m-1.5">
+                {/* <div className="rounded-4xl bg-gray-700 shadow-md">
+                  <button
+                    onClick={handleClick}
+                    className="text-xl shadow-md rounded-3xl w-28  m-1.5 px-3 py-2 bg-black text-white"
+                  >
+                    {currentMode}
+                  </button>
+                </div> */}
               </div>
               <div className="h-full flex items-center justify-center">
                 {/* minus button  */}
@@ -1362,9 +1436,11 @@ const LeftController = () => {
               </div>
               {/* max user temp  */}
               <div className="flex gap-2 h-full justify-start items-start pt-10 ">
-                <p className="flex justify-evenly shadow-md text-4xl px-4 py-4 rounded-3xl font-['poppins']">
-                  {maxMachineTemp}
-                </p>
+                <div className="bg-gray-700 rounded-3xl shadow-md">
+                  <p className="flex justify-evenly bg-black text-white shadow-md text-3xl m-1 px-4 py-3 rounded-3xl font-['poppins']">
+                    {maxMachineTemp}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

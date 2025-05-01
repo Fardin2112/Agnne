@@ -52,21 +52,22 @@ const LightControlPanel = () => {
       //   // boxShadow: `0 0 100px ${ambientColor}`,
       // }}
     >
-      <div className={`w-full p-6 md:p-10 backdrop-blur-md backdrop-filter bg-opacity-20   rounded-lg flex flex-col gap-8 `}>
+      {/* <div className={`w-full p-6 md:p-10 backdrop-blur-md backdrop-filter bg-opacity-20   rounded-lg flex flex-col gap-8 `}> */}
         {/* <h2 className="text-2xl md:text-3xl font-bold text-center">
           Light Control System
         </h2> */}
 
-        <div className="flex flex-col justify-center items-center">
+        {/* <div className="flex flex-col justify-center items-center w-full"> */}
 
-          <div className="w-[500px] h-[180px]">
+          {/* <div className="w-[500px] h-[180px]">
           <LightPreview
             blueLight={blueLight}
             redLight={redLight}
           />
-          </div>
+          </div> */}
 
-          <div className="space-y-8 w-[600px] pt-10">
+          <div className="flex justify-center w-full h-full">
+            <div className="space-y-9 bg-red-600">
             <LightSlider
               color="blue"
               value={blueLight}
@@ -78,11 +79,12 @@ const LightControlPanel = () => {
               value={redLight}
               onChange={handleRedLightChange}
             />
+            </div>
           </div>
 
-        </div>
+        {/* </div> */}
 
-        <LightPresets onSelect={handlePresetSelect} />
+        {/* <LightPresets onSelect={handlePresetSelect} /> */}
 
         {/* <div className="flex justify-between text-white">
           <button
@@ -98,7 +100,7 @@ const LightControlPanel = () => {
             Save Configuration
           </button>
         </div> */}
-      </div>
+      {/* </div> */}
     </div>
   );
 };

@@ -15,17 +15,7 @@ function FanController() {
     sendWsMessage,
   } = useContext(UserContext);
 
-  // Send max machine temp update to server
-  const MaxMachineTempFun = async (value) => {
-    try {
-      await axios.post("http://localhost:3000/api/device/machine-maxtemp", {
-        value,
-      });
-      console.log("✅ Max Machine Temp Set:", value);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+
 
   // Send fan speed to server
   const sendFanSpeed = async (type, value) => {
@@ -82,7 +72,7 @@ function FanController() {
         />
 
         {/* Fan Speed Presets */}
-        <div className="flex gap-3 pt-10">
+        {/* <div className="flex gap-3 pt-10">
           {[0, 25, 50, 75, 100].map((speed) => (
             <button
               key={speed}
@@ -92,7 +82,7 @@ function FanController() {
               {speed}%
             </button>
           ))}
-        </div>
+        </div> */}
 
         {/* Auto Button */}
         <div className="mt-4">
