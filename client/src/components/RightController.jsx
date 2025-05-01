@@ -130,7 +130,7 @@ function RightController() {
   // Dynamic stroke color for timer based on timeLeft
   const getTimerStrokeColor = () => {
     const percentage = (timeLeft / (sessionTime * 60)) * 100;
-    if (percentage > 50) return "#00C2FF"; // ocen for >50%
+    if (percentage > 50) return "#fffff"; // ocen for >50%
     if (percentage > 20) return "#f59e0b"; // Yellow for 20-50%
     return "#ef4444"; // Red for <20%
   };
@@ -138,10 +138,9 @@ function RightController() {
   // ========== UI ==========
   return (
     <div className="w-full h-full">
-      
       <div className="flex flex-col items-center justify-center w-full h-full pb-5 pt-20 px-5">
         {/* Timer Section */}
-        <div className="bg-[#F4F7FB] w-full h-full flex flex-col items-center justify-center shadow-md rounded-lg p-6">
+        <div className="bg-[#0A0A0A] w-full h-full flex flex-col items-center justify-center shadow-md rounded-lg p-6">
           <p
             className={`relative font-['Playfair'] font-semibold text-4xl ${
               isDarkMode ? "text-[#00C2FF]" : "text-[#00C2FF]"
@@ -150,50 +149,59 @@ function RightController() {
             Session Time
           </p>
           {/* Timer Circle */}
-          <div className="relative flex justify-evenly items-center mt-6 w-full">
+          <div className="relative flex justify-evenly items-center mt-6 w-full h-full">
             <div>
               <button
                 onClick={handleDecreaseTimeChange}
-                className={`p-4 rounded-full shadow-md text-xl font-bold ${
+                className={` rounded-full shadow-md text-xl font-bold ${
                   isDarkMode ? "text-white" : "text-gray-700"
                 }`}
               >
                 <FaMinus className="text-4xl text-[#00C2FF]" />
               </button>
             </div>
+
             <svg width="300" height="300" viewBox="0 0 120 120">
               {/* Background Circle */}
+              <circle cx="60" cy="60" r="51" fill="#FFFFFF" />
+
+              {/* Outer Dotted Circle */}
               <circle
                 cx="60"
                 cy="60"
-                r="50"
+                r="56" // Slightly larger than background circle
+                fill="none"
+                stroke="#00C2FF" // Color of the dots
+                strokeWidth="5"
+                strokeDasharray="1,3" // Dot and gap pattern
+                transform="rotate(-90 60 60)" // Start at top
+              />
+
+              {/* Progress background circle */}
+              <circle
+                cx="60"
+                cy="60"
+                r="48"
                 fill="transparent"
-                stroke="lightgray"
+                stroke="white"
                 strokeWidth="2"
               />
+
               {/* Progress Bar */}
               <circle
                 cx="60"
                 cy="60"
-                r="50"
+                r="46"
                 fill="transparent"
-                stroke={getTimerStrokeColor()}
+                stroke="#00C2FF"
                 strokeWidth="2"
                 strokeDasharray="314"
                 strokeDashoffset={314 - (timeLeft / (sessionTime * 60)) * 314}
                 strokeLinecap="round"
                 transform="rotate(-90 60 60)"
               />
-              {/* Knob */}
-              <circle
-                cx={getKnobPosition().x}
-                cy={getKnobPosition().y}
-                r="3" // Knob size
-                fill="#ffffff" // White fill for visibility
-                stroke={getTimerStrokeColor()} // Match progress bar color
-                strokeWidth="2"
-              />
             </svg>
+
             <button
               onClick={handleIncreaseTimeChange}
               className={`p-4 rounded-full shadow-md text-xl font-bold ${
@@ -203,27 +211,37 @@ function RightController() {
               <FaPlus className="text-4xl text-[#00C2FF]" />
             </button>
 
+            {/* Time value */}
             <span
-              className={`absolute font-['playfair'] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl rounded-full ${
+              className={`absolute font-['playfair'] text-5xl ${
                 isDarkMode ? "text-white" : "text-gray-700"
               }`}
+              style={{
+                top: "50%",
+                left: "47%",
+                transform: "translate(-50%, -60%)", // Slightly up to leave space for "Minutes"
+              }}
             >
-              <p className="text-gray-700">
-                {Math.floor(timeLeft / 60)}:
-                {String(timeLeft % 60).padStart(2, "0")}
-              </p>
+              {Math.floor(timeLeft / 60)}:
+              {String(timeLeft % 60).padStart(2, "0")}
             </span>
-            <p className="absolute top-[55%] text-gray-400 font-['playfair'] text-2xl mt-5">
+
+            {/* Minutes Label */}
+            <p
+              className="absolute text-gray-400 font-['playfair'] text-2xl"
+              style={{
+                top: "56%",
+                left: "47%",
+                transform: "translate(-50%, 0)",
+              }}
+            >
               Minutes
             </p>
           </div>
 
-          {/* Time Controls */}
-          <div className="flex justify-between mt-[-8px] w-[190px]"></div>
-
           {/* Control Buttons */}
-          <div className="mt-6 flex h-[100px] w-full">
-            <div className="flex items-center justify-center w-full">
+          <div className="mt-6 flex w-full">
+            <div className="flex items-center justify-center h-[100px] w-full">
               {isRunning ? (
                 <div className="flex items-center gap-10 justify-evenly px-6 py-6 text-[#00C2FF] border-[#00C2FF] text-xl font-bold">
                   <button

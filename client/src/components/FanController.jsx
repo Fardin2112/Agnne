@@ -4,6 +4,7 @@ import { FaUser } from "react-icons/fa";
 import FanSlider from "./Fanslider";
 import axios from "axios";
 import { IoMdSettings } from "react-icons/io";
+import { MdOutlineHdrAuto } from "react-icons/md";
 
 function FanController() {
   const {
@@ -14,8 +15,6 @@ function FanController() {
     setMachineFanSpeed,
     sendWsMessage,
   } = useContext(UserContext);
-
-
 
   // Send fan speed to server
   const sendFanSpeed = async (type, value) => {
@@ -61,101 +60,133 @@ function FanController() {
     >
       {/* User Fan Control */}
       <div className="flex flex-col items-center w-full h-[49%] rounded-md shadow-md bg-[#F4F7FB]">
-        <h2 className="w-full flex p-4 gap-4 items-center text-2xl font-semibold text-gray-700 pb-6">
-          <FaUser className="text-3xl" /> User Fan
-        </h2>
+        <div className="flex justify-between w-full h-[80%]">
+          <div className="pl-10">
+            <h2 className="w-full flex py-5 gap-4 items-center text-2xl font-semibold text-gray-700 pb-6">
+              <FaUser className="text-3xl" /> User Fan
+            </h2>
 
-        <FanSlider
-          color="yellow"
-          value={userFanSpeed}
-          onChange={handleUserfan}
-        />
+            <div className="pl-15 pt-5">
+            <span className="text-5xl">
+                {userFanSpeed < 0 ? "Auto" : `${userFanSpeed}`}
+                <span className="text-sm">%</span>
+              </span>
+              <div className="flex gap-2 items-center justify-center p-5 mt-6 rounded-md bg-gray-400" onClick={handleUserAuto}>
+                Auto <MdOutlineHdrAuto className="text-lg"/>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end items-start h-[300px] w-[50%]">
+  <svg width="300" height="300" viewBox="0 0 200 200">
+    <g transform="translate(0, -38)">
+      {/* Dotted Arc with visible gap above solid arc */}
+      <path
+        d="M 200 211 A 61 61 0 0 1 200 49"
+        fill="none"
+        stroke="#444"
+        strokeWidth="6"
+        strokeDasharray="1,2"
+      />
+      
+      {/* Foreground Solid Arc */}
+      <path
+        d="M 200 200 A 50 50 0 0 1 200 60"
+        fill="none"
+        stroke="#444"
+        strokeWidth="12"
+      />
+      <path
+        d="M 200 200 A 50 50 0 0 1 200 60"
+        fill="none"
+        stroke="red"
+        strokeWidth="12"
+      />
+    </g>
+  </svg>
+</div>
 
-        {/* Fan Speed Presets */}
-        {/* <div className="flex gap-3 pt-10">
-          {[0, 25, 50, 75, 100].map((speed) => (
-            <button
-              key={speed}
-              onClick={() => handleUserfan(speed)}
-              className="rounded-md px-8 py-3 shadow-md hover:scale-105 font-semibold text-white bg-[#033D73]"
-            >
-              {speed}%
-            </button>
-          ))}
-        </div> */}
 
-        {/* Auto Button */}
-        <div className="mt-4">
-          <button
-            onClick={handleUserAuto}
-            className="px-4 shadow-md border-1 border-[#033D73] py-2 bg-[#033D73] text-white rounded-lg text-lg flex items-center"
-          >
-                        <svg
-              width="40"
-              height="40"
-              viewBox="0 0 44 44"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M21.6578 27.7368C21.1732 27.1633 21.2453 26.3056 21.8188 25.8211C21.9465 25.7132 22.1587 25.4374 22.218 25.0722C22.2673 24.7688 22.2384 24.2483 21.6446 23.5236C20.5137 22.1434 19.953 20.8298 20.1071 19.4792C20.2528 18.2025 21.0194 17.2097 21.6512 16.4505C22.2327 15.7517 22.6422 15.0477 22.7645 14.4813C22.8212 14.2185 22.8049 14.0372 22.7628 13.9098C22.7245 13.7937 22.6362 13.633 22.3878 13.4464C21.7875 12.9955 21.6664 12.1434 22.1172 11.5431C22.5681 10.9428 23.4202 10.8216 24.0205 11.2725C24.6612 11.7537 25.1128 12.3561 25.3443 13.0568C25.5721 13.7462 25.5558 14.4354 25.422 15.0551C25.1633 16.2535 24.4297 17.3619 23.741 18.1895C23.1027 18.9566 22.8531 19.3947 22.8083 19.7874C22.772 20.1062 22.8463 20.7005 23.7476 21.8005C24.7796 23.0601 25.0894 24.3521 24.9016 25.5082C24.7238 26.6025 24.1231 27.4334 23.5735 27.8978C23 28.3823 22.1423 28.3103 21.6578 27.7368ZM28.9078 27.7368C28.4232 27.1633 28.4953 26.3056 29.0688 25.8211C29.1965 25.7132 29.4087 25.4374 29.468 25.0722C29.5173 24.7688 29.4884 24.2483 28.8946 23.5236C27.7637 22.1434 27.203 20.8298 27.3571 19.4792C27.5028 18.2025 28.2694 17.2097 28.9012 16.4505C29.3815 15.8734 30.2386 15.7949 30.8157 16.2751C31.3927 16.7553 31.4713 17.6124 30.991 18.1895C30.3527 18.9566 30.1032 19.3947 30.0583 19.7874C30.022 20.1062 30.0963 20.7005 30.9976 21.8005C32.0296 23.0601 32.3394 24.3521 32.1516 25.5082C31.9738 26.6025 31.3732 27.4334 30.8235 27.8978C30.25 28.3823 29.3923 28.3103 28.9078 27.7368ZM14.4078 27.7368C13.9232 27.1633 13.9953 26.3056 14.5688 25.8211C14.6965 25.7132 14.9087 25.4374 14.968 25.0722C15.0173 24.7688 14.9884 24.2483 14.3946 23.5236C13.2637 22.1434 12.703 20.8298 12.8571 19.4792C13.0028 18.2025 13.7694 17.2097 14.4012 16.4505C14.8815 15.8734 15.7386 15.7949 16.3157 16.2751C16.8927 16.7553 16.9713 17.6124 16.491 18.1895C15.8527 18.9566 15.6032 19.3947 15.5583 19.7874C15.522 20.1062 15.5963 20.7005 16.4976 21.8005C17.5296 23.0601 17.8394 24.3521 17.6516 25.5082C17.4738 26.6025 16.8732 27.4334 16.3235 27.8978C15.75 28.3823 14.8923 28.3103 14.4078 27.7368ZM10 32.297C10 31.5462 10.6086 30.9376 11.3594 30.9376H33.1094C33.8601 30.9376 34.4688 31.5462 34.4688 32.297C34.4688 33.0477 33.8601 33.6564 33.1094 33.6564H11.3594C10.6086 33.6564 10 33.0477 10 32.297Z"
-                fill="white"
-              />
-            </svg>
-            Auto
-          </button>
+
+
+
+
+        </div>
+
+        <div className="bg-gray-400 flex w-[90%] h-10 items-center px-10">
+        <input
+            type="range"
+            min="0"
+            max="100"
+            className="w-full accent-cyan-500"
+            value={userFanSpeed < 0 ? 0 : userFanSpeed}
+            onChange={(e) => handleUserfan(Number(e.target.value))}
+          />
         </div>
       </div>
 
       {/* Machine Fan Control */}
-      <div className="flex flex-col items-center w-full h-[49%] rounded-md mt-3 shadow-md bg-[#F4F7FB]">
-        <h2 className="w-full flex p-4 gap-4 items-center font-semibold text-2xl text-gray-700 pb-6">
-        <IoMdSettings className="text-4xl"/> Machine Fan
-        </h2>
+      <div className="flex flex-col items-center w-full h-[49%] mt-2 rounded-md shadow-md bg-[#F4F7FB]">
+        <div className="flex justify-between w-full h-[80%]">
+          <div className="pl-10">
+            <h2 className="w-full flex py-5 gap-4 items-center text-2xl font-semibold text-gray-700 pb-6">
+              <IoMdSettings className="text-3xl" /> User Fan
+            </h2>
 
-        <FanSlider
-          color="green"
-          value={machineFanSpeed}
-          onChange={handleMachinefan}
-        />
+            <div className="pl-15 pt-5">
+            <span className="text-5xl">
+                {machineFanSpeed < 0 ? "Auto" : `${machineFanSpeed}`}
+                <span className="text-sm">%</span>
+              </span>
+              <div className="flex gap-2 items-center justify-center p-5 mt-6 rounded-md bg-gray-400" onClick={handleMachineAuto}>
+                Auto <MdOutlineHdrAuto className="text-lg"/>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end items-start h-[300px] w-[50%]">
+  <svg width="300" height="300" viewBox="0 0 200 200">
+    <g transform="translate(0, -38)">
+      {/* Dotted Arc with visible gap above solid arc */}
+      <path
+        d="M 200 211 A 61 61 0 0 1 200 49"
+        fill="none"
+        stroke="#444"
+        strokeWidth="6"
+        strokeDasharray="1,2"
+      />
+      
+      {/* Foreground Solid Arc */}
+      <path
+        d="M 200 200 A 50 50 0 0 1 200 60"
+        fill="none"
+        stroke="#444"
+        strokeWidth="12"
+      />
+      <path
+        d="M 200 200 A 50 50 0 0 1 200 60"
+        fill="none"
+        stroke="red"
+        strokeWidth="12"
+      />
+    </g>
+  </svg>
+</div>
 
-        {/* Fan Speed Presets */}
-        <div className="flex gap-3 pt-10">
-          {[0, 25, 50, 75, 100].map((speed) => (
-            <button
-              key={speed}
-              onClick={() => handleMachinefan(speed)}
-              className="rounded-md px-8 py-3 shadow-md hover:scale-105 font-semibold text-white bg-[#033D73]"
-            >
-              {speed}%
-            </button>
-          ))}
+
+
+
+
+
         </div>
 
-        {/* Auto Button */}
-        <div className="mt-4">
-          <button
-            onClick={handleMachineAuto}
-            className="px-4 shadow-md py-2 bg-gray-200 text-black rounded-lg text-lg flex items-center"
-          >
-                        <svg
-              width="40"
-              height="40"
-              viewBox="0 0 44 44"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M21.6578 27.7368C21.1732 27.1633 21.2453 26.3056 21.8188 25.8211C21.9465 25.7132 22.1587 25.4374 22.218 25.0722C22.2673 24.7688 22.2384 24.2483 21.6446 23.5236C20.5137 22.1434 19.953 20.8298 20.1071 19.4792C20.2528 18.2025 21.0194 17.2097 21.6512 16.4505C22.2327 15.7517 22.6422 15.0477 22.7645 14.4813C22.8212 14.2185 22.8049 14.0372 22.7628 13.9098C22.7245 13.7937 22.6362 13.633 22.3878 13.4464C21.7875 12.9955 21.6664 12.1434 22.1172 11.5431C22.5681 10.9428 23.4202 10.8216 24.0205 11.2725C24.6612 11.7537 25.1128 12.3561 25.3443 13.0568C25.5721 13.7462 25.5558 14.4354 25.422 15.0551C25.1633 16.2535 24.4297 17.3619 23.741 18.1895C23.1027 18.9566 22.8531 19.3947 22.8083 19.7874C22.772 20.1062 22.8463 20.7005 23.7476 21.8005C24.7796 23.0601 25.0894 24.3521 24.9016 25.5082C24.7238 26.6025 24.1231 27.4334 23.5735 27.8978C23 28.3823 22.1423 28.3103 21.6578 27.7368ZM28.9078 27.7368C28.4232 27.1633 28.4953 26.3056 29.0688 25.8211C29.1965 25.7132 29.4087 25.4374 29.468 25.0722C29.5173 24.7688 29.4884 24.2483 28.8946 23.5236C27.7637 22.1434 27.203 20.8298 27.3571 19.4792C27.5028 18.2025 28.2694 17.2097 28.9012 16.4505C29.3815 15.8734 30.2386 15.7949 30.8157 16.2751C31.3927 16.7553 31.4713 17.6124 30.991 18.1895C30.3527 18.9566 30.1032 19.3947 30.0583 19.7874C30.022 20.1062 30.0963 20.7005 30.9976 21.8005C32.0296 23.0601 32.3394 24.3521 32.1516 25.5082C31.9738 26.6025 31.3732 27.4334 30.8235 27.8978C30.25 28.3823 29.3923 28.3103 28.9078 27.7368ZM14.4078 27.7368C13.9232 27.1633 13.9953 26.3056 14.5688 25.8211C14.6965 25.7132 14.9087 25.4374 14.968 25.0722C15.0173 24.7688 14.9884 24.2483 14.3946 23.5236C13.2637 22.1434 12.703 20.8298 12.8571 19.4792C13.0028 18.2025 13.7694 17.2097 14.4012 16.4505C14.8815 15.8734 15.7386 15.7949 16.3157 16.2751C16.8927 16.7553 16.9713 17.6124 16.491 18.1895C15.8527 18.9566 15.6032 19.3947 15.5583 19.7874C15.522 20.1062 15.5963 20.7005 16.4976 21.8005C17.5296 23.0601 17.8394 24.3521 17.6516 25.5082C17.4738 26.6025 16.8732 27.4334 16.3235 27.8978C15.75 28.3823 14.8923 28.3103 14.4078 27.7368ZM10 32.297C10 31.5462 10.6086 30.9376 11.3594 30.9376H33.1094C33.8601 30.9376 34.4688 31.5462 34.4688 32.297C34.4688 33.0477 33.8601 33.6564 33.1094 33.6564H11.3594C10.6086 33.6564 10 33.0477 10 32.297Z"
-                fill="black"
-              />
-            </svg>
-            custom
-          </button>
+        <div className="bg-gray-400 flex w-[90%] h-10 items-center px-10">
+        <input
+            type="range"
+            min="0"
+            max="100"
+            className="w-full accent-cyan-500"
+            value={machineFanSpeed < 0 ? 0 : machineFanSpeed}
+            onChange={(e) => handleMachinefan(Number(e.target.value))}
+          />
         </div>
       </div>
     </div>

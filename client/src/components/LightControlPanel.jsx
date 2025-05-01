@@ -10,8 +10,14 @@ const LightControlPanel = () => {
   // const [redIntensity, setRedIntensity] = useState(50);
   const [ambientColor, setAmbientColor] = useState("");
 
-  const { blueLight, setBlueLight, redLight, setRedLight, sendWsMessage, isDarkMode } =
-    useContext(UserContext);
+  const {
+    blueLight,
+    setBlueLight,
+    redLight,
+    setRedLight,
+    sendWsMessage,
+    isDarkMode,
+  } = useContext(UserContext);
 
   useEffect(() => {
     const red = Math.round((redLight / 100) * 255);
@@ -29,78 +35,52 @@ const LightControlPanel = () => {
     setRedLight(preset.red);
   };
 
-    // 🔵 Handle blue light slider change
-    const handleBlueLightChange = (newValue) => {
-      // const newValue = Number(e.target.value);
-      setBlueLight(newValue);
-      sendWsMessage(`BLUE_INTENSITY=${newValue}`);
-    };
-  
-    // 🔴 Handle red light slider change
-    const handleRedLightChange = (newValue) => {
-      // const newValue = Number(e.target.value);
-      setRedLight(newValue);
-      sendWsMessage(`RED_INTENSITY=${newValue}`);
-    };
+  // 🔵 Handle blue light slider change
+  const handleBlueLightChange = (newValue) => {
+    // const newValue = Number(e.target.value);
+    setBlueLight(newValue);
+    sendWsMessage(`BLUE_INTENSITY=${newValue}`);
+  };
+
+  // 🔴 Handle red light slider change
+  const handleRedLightChange = (newValue) => {
+    // const newValue = Number(e.target.value);
+    setRedLight(newValue);
+    sendWsMessage(`RED_INTENSITY=${newValue}`);
+  };
 
   return (
-    <div
-      className={`w-full h-full relative overflow-hidden rounded-lg shadow-md ${isDarkMode ?"bg-gray-900" : "bg-[#F4F7FB]"} `}
-      // style={{
-      //   background:
-      //     "radial-gradient(circle at center, #1a1a2e 0%, #16213e 100%)",
-      //   // boxShadow: `0 0 100px ${ambientColor}`,
-      // }}
-    >
-      {/* <div className={`w-full p-6 md:p-10 backdrop-blur-md backdrop-filter bg-opacity-20   rounded-lg flex flex-col gap-8 `}> */}
-        {/* <h2 className="text-2xl md:text-3xl font-bold text-center">
-          Light Control System
-        </h2> */}
-
-        {/* <div className="flex flex-col justify-center items-center w-full"> */}
-
-          {/* <div className="w-[500px] h-[180px]">
-          <LightPreview
-            blueLight={blueLight}
-            redLight={redLight}
-          />
-          </div> */}
-
-          <div className="flex justify-center w-full h-full">
-            <div className="space-y-9 bg-red-600">
-            <LightSlider
-              color="blue"
-              value={blueLight}
-              onChange={handleBlueLightChange}
-            />
-
-            <LightSlider
-              color="red"
-              value={redLight}
-              onChange={handleRedLightChange}
-            />
-            </div>
+    <div className="flex flex-col rounded-md shadow-md bg-[#F4F7FB] h-full w-full pt-10">
+      <div className="flex justify-evenly h-full w-full ">
+        <LightSlider
+          color="blue"
+          value={blueLight}
+          onChange={handleBlueLightChange}
+        />
+        {/* info block */}
+        <div className="flex flex-col text-gray-700 pt-16">
+          <div className="text-base text-gray-700">LIGHT INTENSITY</div>
+          <div className="text-5xl font-bold text-white">
+            <span className="text-blue-400">
+              {blueLight}
+              <span className="text-base text-gray-400 pr-2">%</span>
+            </span>
+            <span className="text-red-400">
+              {redLight}
+              <span className="text-base text-gray-400">%</span>
+            </span>
           </div>
-
-        {/* </div> */}
-
-        {/* <LightPresets onSelect={handlePresetSelect} /> */}
-
-        {/* <div className="flex justify-between text-white">
-          <button
-            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center gap-2 transition-all duration-300 text-sm"
-            onClick={resetControls}
-          >
-            <RotateCcw className="w-4 h-4" />
-            Reset
-          </button>
-
-          <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-red-600 hover:from-blue-500 hover:to-red-500 rounded-lg flex items-center gap-2 transition-all duration-300 text-sm">
-            <Save className="w-4 h-4" />
-            Save Configuration
-          </button>
-        </div> */}
-      {/* </div> */}
+        </div>
+        <LightSlider
+          color="red"
+          value={redLight}
+          onChange={handleRedLightChange}
+          // reverse // <-- this flips the layout
+        />
+      </div>
+      <div className="px-10 pb-3">
+        <LightPresets />
+      </div>
     </div>
   );
 };
